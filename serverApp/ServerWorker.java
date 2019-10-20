@@ -176,7 +176,7 @@ public class ServerWorker extends Thread {
    }
 
 
-   private void send(String msg) throws IOException {
+   public void send(String msg) throws IOException {
 
       if (login != null) {
          outputStream.write(msg.getBytes());

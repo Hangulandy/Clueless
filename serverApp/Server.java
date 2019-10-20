@@ -38,4 +38,16 @@ public class Server extends Thread {
     public void removeWorker(ServerWorker serverWorker) {
         workerList.remove(serverWorker);
     }
+
+
+    public void broadcast(String msg) {
+
+        for (ServerWorker worker : workerList) {
+            try {
+                worker.send(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
