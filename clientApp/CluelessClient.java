@@ -64,12 +64,10 @@ public class CluelessClient {
          if (client.login(client.userName)) {
             System.out.println("Login successful");
 
-
-            // TODO messages go here
-             System.out.println("Press ENTER to send a message to the other client");
+             System.out.println("Press ENTER to broadcast a message to the other clients");
              client.scanner.nextLine();
 
-             client.msg("player1", "Hello!");
+             client.broadcastMsg("This is a test of the broadcast method...");
 
          } else {
             System.err.println("Login failed");
@@ -134,6 +132,7 @@ public class CluelessClient {
       try {
          String line;
          while ((line = bufferedIn.readLine()) != null) {
+            System.out.println("Message received from server: " + line);
             String[] tokens = line.split(" ");
             if (tokens != null && tokens.length > 0) {
                String cmd = tokens[0];
@@ -142,8 +141,7 @@ public class CluelessClient {
                } else if ("offline".equalsIgnoreCase(cmd)) {
                   handleOffline(tokens);
                } else if ("msg".equalsIgnoreCase(cmd)) {
-                  String[] tokensMsg = line.split(" ");
-                  handleMessage(tokensMsg);
+                  handleMessage(tokens);
                }
             }
          }
@@ -158,21 +156,27 @@ public class CluelessClient {
    }
 
 
-   private void handleMessage(String[] tokensMsg) {
+   private void handleMessage(String[] tokens) {
 
-      String login = tokensMsg[1];
-      StringBuilder msg = new StringBuilder();
+      String login = tokens[1];
 
-      for (int i = 2; i < tokensMsg.length; i++) {
-         msg.append(tokensMsg[i]);
-         msg.append(" ");
-      }
-
-      String msgBody = msg.toString();
+      String msgBody = concatenateTokens(tokens, 2, tokens.length - 1);
 
       for (MessageListener listener : messageListeners) {
          listener.onMessage(login, msgBody);
       }
+   }
+
+   private String concatenateTokens(String[] tokens, int fromIndex, int toIndex) {
+
+      StringBuilder output = new StringBuilder();
+
+      for (int i = fromIndex; i <= toIndex; i++) {
+         output.append(tokens[i]);
+         output.append(" ");
+      }
+
+      return output.toString();
    }
 
 
@@ -231,6 +235,13 @@ public class CluelessClient {
    public void removeMessageListener(MessageListener listener) {
 
       messageListeners.remove(listener);
+   }
+
+   public void broadcastMsg(String msg) throws IOException {
+
+      String cmd = "broadcast " + msg + "\n";
+      serverOut.write(cmd.getBytes());
+
    }
 
 

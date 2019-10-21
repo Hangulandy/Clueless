@@ -50,10 +50,8 @@ public class ServerWorker extends Thread {
                handleLogin(outputStream, tokens);
             } else if ("msg".equalsIgnoreCase(cmd)) {
                handleMessage(tokens);
-            } else if ("join".equalsIgnoreCase(cmd)) {
-               handleJoin(tokens);
-            } else if ("leave".equalsIgnoreCase(cmd)) {
-               handleLeave(tokens);
+            } else if ("broadcast".equalsIgnoreCase(cmd)) {
+               handleBroadcast(tokens);
             } else {
                String msg = "unknown " + cmd + "\n";
                outputStream.write(msg.getBytes());
@@ -65,50 +63,37 @@ public class ServerWorker extends Thread {
    }
 
 
-   private void handleLeave(String[] tokens) {
+   private void handleBroadcast(String[] tokens) {
 
-      if (tokens.length > 1) {
-         String topic = tokens[1];
-         topicSet.remove(topic);
+      String body = concatenateTokens(tokens, 1, tokens.length - 1);
+
+      server.broadcast(body);
+   }
+
+
+   private String concatenateTokens(String[] tokens, int fromIndex, int toIndex) {
+
+      StringBuilder output = new StringBuilder();
+
+      for (int i = fromIndex; i <= toIndex; i++) {
+         output.append(tokens[i]);
+         output.append(" ");
       }
+
+      return output.toString();
    }
 
-
-   public boolean isMemberOfTopic(String topic) {
-
-      return topicSet.contains(topic);
-   }
-
-
-   private void handleJoin(String[] tokens) {
-
-      if (tokens.length > 1) {
-         String topic = tokens[1];
-         topicSet.add(topic);
-      }
-   }
-
-
-   // format: "msg" "login" body...
-   // format: "msg" "#topic" body...
    private void handleMessage(String[] tokens) throws IOException {
 
       String sendTo = tokens[1];
 
-      StringBuilder msg = new StringBuilder();
-
-      for (int i = 2; i < tokens.length; i++) {
-         msg.append(tokens[i]);
-         msg.append(" ");
-      }
-
-      String body = msg.toString();
+      String body = concatenateTokens(tokens, 2, tokens.length - 1);
 
       List<ServerWorker> workerList = server.getWorkerList();
       for (ServerWorker worker : workerList) {
 
          if (sendTo.equalsIgnoreCase(worker.getLogin())) {
-            String outMsg = "msg " + login + " " + body + "\n";
+            String outMsg = "msg " + this.login + " " + body + "\n";
             worker.send(outMsg);
          }
       }
@@ -176,10 +161,12 @@ public class ServerWorker extends Thread {
    }
 
 
-   public void send(String msg) throws IOException {
+   public void send(String outMsg) throws IOException {
 
       if (login != null) {
-         outputStream.write(msg.getBytes());
+         System.out.println("login != null");
+         System.out.println(outMsg);
+         outputStream.write(outMsg.getBytes());
       }
    }
 
