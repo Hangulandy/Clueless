@@ -13,22 +13,22 @@ public class Player
       switch (playerNum)
       {
          case 1:
-            _characterName = "Ms. Scarlett";
+            _characterName = "Ms._Scarlett";
             break;
          case 2:
-            _characterName = "Col. Mustard";
+            _characterName = "Col._Mustard";
             break;
          case 3:
-            _characterName = "Mrs. White";
+            _characterName = "Mrs._White";
             break;
          case 4:
-            _characterName = "Mrs. Peacock";
+            _characterName = "Mrs._Peacock";
             break;
          case 5:
-            _characterName = "Prof. Plum";
+            _characterName = "Prof._Plum";
             break;
          case 6:
-            _characterName = "Mr. Green";
+            _characterName = "Mr._Green";
             break;
       }
 

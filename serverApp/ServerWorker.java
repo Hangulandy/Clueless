@@ -1,3 +1,11 @@
+/*
+The ServerWorker class is a Thread that sends messages to and reads messages from the client. It parses the messages
+and calls appropriate methods on the Server to communication with the rest of the system.
+
+This implementation is borrowed from a tutorial at https://fullstackmastery.com/ep4 written by Jim Liao. It was
+adapted for use in this system by Andrew Johnson.
+ */
+
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -11,6 +19,10 @@ public class ServerWorker extends Thread
    private OutputStream _outputStream;
 
 
+   /*
+   The default constructor should be called by the Server. It will set this server to the calling server. It will set
+   the client socket to the socket initiated by the server when the socket was accepted.
+    */
    public ServerWorker(Server server, Socket clientSocket)
    {
 
@@ -19,6 +31,9 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   This is called by the Server after calling the ServerWorker constructor
+    */
    @Override
    public void run()
    {
@@ -36,6 +51,10 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   The handleClientSocket method reads the input stream from the client socket and handles incoming communications by
+    parsing them and calling the appropriate methods based on the content of the communication.
+    */
    private void handleClientSocket() throws IOException, InterruptedException
    {
 
@@ -66,10 +85,15 @@ public class ServerWorker extends Thread
             } else if ("start".equalsIgnoreCase(cmd))
             {
                handleStartGame();
-            } else
+            } else if ("move".equalsIgnoreCase(cmd))
             {
-               String msg = "unknown " + cmd + "\n";
-               _outputStream.write(msg.getBytes());
+               handleMove(tokens);
+            } else if ("suggest".equalsIgnoreCase(cmd))
+            {
+               handleSuggest(tokens);
+            } else if ("accuse".equalsIgnoreCase(cmd))
+            {
+               handleAccuse(tokens);
             }
          }
       }
@@ -78,12 +102,40 @@ public class ServerWorker extends Thread
    }
 
 
+   private void handleMove(String[] tokens)
+   {
+
+      _server.move(tokens);
+   }
+
+
+   private void handleAccuse(String[] tokens)
+   {
+
+      _server.accuse(tokens);
+   }
+
+
+   private void handleSuggest(String[] tokens)
+   {
+
+      _server.suggest(tokens);
+   }
+
+
+   /*
+   The handleStartGame method will be called when a CluelessClient instance requests so. The rest is self explanatory.
+    */
    private void handleStartGame()
    {
+
       _server.requestGameStart();
    }
 
 
+   /*
+   The handleBroadcast method passes a broadcast request, including the message body, to the server.
+    */
    private void handleBroadcast(String[] tokens)
    {
 
@@ -93,6 +145,9 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   The concatenateTokens method is used to reassemble the body of a message.
+    */
    private String concatenateTokens(String[] tokens, int fromIndex, int toIndex)
    {
 
@@ -108,6 +163,9 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   The handleMessage method is called to parse and relay a text message to another ServerWorker instance.
+    */
    private void handleMessage(String[] tokens) throws IOException
    {
 
@@ -128,6 +186,10 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   The handleLogoff method processes the CluelessClient request to logoff by first having the Server remove the
+   worker, then sending a logoff message to the other ServerWorkers, and finally closing the clientSocket.
+    */
    private void handleLogoff() throws IOException
    {
 
@@ -150,6 +212,9 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   Self-explanatory
+    */
    public String getUserName()
    {
 
@@ -157,6 +222,10 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   Processes a login request by setting the userName, sending this ServerWorker all other ServerWorker statuses, and
+   sending this ServerWorker's online status messages to the other ServerWorkers
+    */
    private void handleLogin(OutputStream outputStream, String[] tokens) throws IOException
    {
 
@@ -197,6 +266,9 @@ public class ServerWorker extends Thread
    }
 
 
+   /*
+   Writes a message to the outputStream that goes to the CluelessClient for this ServerWorker.
+    */
    public void send(String outMsg) throws IOException
    {
 

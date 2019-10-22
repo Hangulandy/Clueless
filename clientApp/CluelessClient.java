@@ -1,3 +1,13 @@
+/*
+The CluelessClient class is an application that handles client-side operations, reads messages from the corresponding
+ ServerWorker, and sends messages to the same.
+
+This implementation is borrowed from a tutorial at https://fullstackmastery.com/ep4 written by Jim Liao. It was
+adapted for use in this system by Andrew Johnson.
+ */
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -95,10 +105,11 @@ public class CluelessClient
 
       System.out.println("Menu Options: ");
       System.out.println("1. Send a message to everybody");
-      System.out.println("2. Move your character");
-      System.out.println("3. Make a suggestion");
-      System.out.println("4. Logoff");
-      System.out.println("5. Start Game");
+      System.out.println("2. Start game");
+      System.out.println("3. Move your character");
+      System.out.println("4. Make a suggestion");
+      System.out.println("5. Make an accusation");
+      System.out.println("6. Logoff");
    }
 
 
@@ -106,19 +117,25 @@ public class CluelessClient
    {
 
       printMainMenu();
-      int userChoice = askUserForN("Please choose an option from the menu:", 1, 5);
+      int userChoice = askUserForN("Please choose an option from the menu:", 1, 6);
       switch (userChoice)
       {
          case 1:
             broadcastMsg();
             break;
          case 2:
-            requestMove();
+            requestStart();
             break;
          case 3:
-            // TODO suggest
+            requestMove("Conservatory");
             break;
          case 4:
+            suggest("Ms._Scarlett", "Rope", "Conservatory");
+            break;
+         case 5:
+            accuse("Ms._Scarlett", "Rope", "Conservatory");
+            break;
+         case 6:
             try
             {
                keepPlaying = false;
@@ -129,31 +146,64 @@ public class CluelessClient
                e.printStackTrace();
             }
             break;
-         case 5:
-             requestStart();
-             break;
       }
 
    }
 
 
-    private void requestStart()
-    {
-        String cmd = "start\n";
-        try
-        {
-            _serverOut.write(cmd.getBytes());
-        } catch (IOException e)
-        {
-            System.out.println("The message failed to send.");
-        }
-
-    }
-
-
-    private void requestMove()
+   private void requestStart()
    {
 
+      String cmd = "start\n";
+      try
+      {
+         _serverOut.write(cmd.getBytes());
+      } catch (IOException e)
+      {
+         System.out.println("The message failed to send.");
+      }
+
+   }
+
+
+   private void requestMove(String room)
+   {
+      String cmd = "move " + room + "\n";
+      try
+      {
+         _serverOut.write(cmd.getBytes());
+      } catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+   }
+
+
+   private void suggest(String character, String weapon, String room)
+   {
+
+      String cmd = "suggest " + character + " " + weapon + " " + room + "\n";
+      try
+      {
+         _serverOut.write(cmd.getBytes());
+      } catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+   }
+
+
+   private void accuse(String suspect, String weapon, String room)
+   {
+
+      String cmd = "accuse " + suspect + " " + weapon + " " + room + "\n";
+      try
+      {
+         _serverOut.write(cmd.getBytes());
+      } catch (IOException e)
+      {
+         e.printStackTrace();
+      }
    }
 
 
@@ -232,12 +282,6 @@ public class CluelessClient
    }
 
 
-   private void suggest()
-   {
-
-   }
-
-
    private void logoff() throws IOException
    {
 
@@ -263,8 +307,13 @@ public class CluelessClient
    }
 
 
+   /*
+   The readMessageLoop method will receive and parse communications from the server and then call the appropriate
+   methods in response.
+    */
    private void readMessageLoop()
    {
+
       try
       {
          String line;
@@ -300,6 +349,9 @@ public class CluelessClient
    }
 
 
+   /*
+   The handleMessage method processes a text message received from the ServerWorker
+    */
    private void handleMessage(String[] tokens)
    {
 
@@ -314,6 +366,9 @@ public class CluelessClient
    }
 
 
+   /*
+   The concatenateTokens method is used to reassemble the body of a message.
+    */
    private String concatenateTokens(String[] tokens, int fromIndex, int toIndex)
    {
 
@@ -329,6 +384,9 @@ public class CluelessClient
    }
 
 
+   /*
+   Processes an offline message received from the ServerWorker Thread.
+    */
    private void handleOffline(String[] tokens)
    {
 
@@ -340,6 +398,9 @@ public class CluelessClient
    }
 
 
+   /*
+   Processes an online message received from the ServerWorker Thread.
+    */
    private void handleOnline(String[] tokens)
    {
 

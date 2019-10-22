@@ -1,3 +1,12 @@
+/*
+The Server class is a Thread that accepts or rejects connection requests, assigns sockets, and starts ServerWorker
+Threads for each accepted connection. It also acts as the "go-between" between the GameController Instance and the
+ServerWorker Threads.
+
+This implementation is borrowed from a tutorial at https://fullstackmastery.com/ep4 written by Jim Liao. It was
+adapted for use in this system by Andrew Johnson.
+ */
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,7 +17,7 @@ public class Server extends Thread
 
    private final int _serverPort;
    private GameController _gc;
-   private int numConnections = 0;
+   private int _numConnections = 0;
 
    private ArrayList<ServerWorker> _workerList = new ArrayList<>();
 
@@ -39,7 +48,7 @@ public class Server extends Thread
          {
             System.out.println("About to accept client connection...");
 
-            if (numConnections < 6)
+            if (_numConnections < 6)
             {
                Socket clientSocket = serverSocket.accept();
                System.out.println("Accepted connection from " + clientSocket);
@@ -61,14 +70,14 @@ public class Server extends Thread
    public void removeWorker(ServerWorker serverWorker)
    {
       _workerList.remove(serverWorker);
-      numConnections--;
+      _numConnections--;
    }
 
 
    public void addWorker(ServerWorker serverWorker)
    {
       _workerList.add(serverWorker);
-      numConnections++;
+      _numConnections++;
       serverWorker.start();
    }
 
@@ -117,6 +126,24 @@ public class Server extends Thread
    public void requestGameStart()
    {
       _gc.startGame();
+   }
+
+
+   public void suggest(String[] tokens)
+   {
+      _gc.suggest(tokens[1], tokens[2], tokens[3]);
+   }
+
+
+   public void accuse(String[] tokens)
+   {
+      _gc.accuse(tokens[1], tokens[2], tokens[3]);
+   }
+
+
+   public void move(String[] tokens)
+   {
+      _gc.move(tokens[1]);
    }
 
 
