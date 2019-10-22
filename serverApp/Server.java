@@ -2,57 +2,79 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
-public class Server extends Thread {
+public class Server extends Thread
+{
 
-   private final int serverPort;
+   private final int _serverPort;
+   private GameController _gc;
+   private int numConnections = 0;
 
-   private ArrayList<ServerWorker> workerList = new ArrayList<>();
+   private ArrayList<ServerWorker> _workerList = new ArrayList<>();
 
 
-   public Server(int serverPort) {
+   public Server(int serverPort)
+   {
 
-      this.serverPort = serverPort;
+      _serverPort = serverPort;
+      _gc = new GameController(this);
    }
 
 
-   public List<ServerWorker> getWorkerList() {
+   public ArrayList<ServerWorker> getWorkerList()
+   {
 
-      return workerList;
+      return _workerList;
    }
 
 
    @Override
-   public void run() {
+   public void run()
+   {
 
-      try {
-         ServerSocket serverSocket = new ServerSocket(serverPort);
-         while (true) {
+      try
+      {
+         ServerSocket serverSocket = new ServerSocket(_serverPort);
+         while (true)
+         {
             System.out.println("About to accept client connection...");
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Accepted connection from " + clientSocket);
-            ServerWorker worker = new ServerWorker(this, clientSocket);
-            workerList.add(worker);
-            worker.start();
+
+            if (numConnections < 6)
+            {
+               Socket clientSocket = serverSocket.accept();
+               System.out.println("Accepted connection from " + clientSocket);
+               ServerWorker worker = new ServerWorker(this, clientSocket);
+               addWorker(worker);
+            } else
+            {
+               // connection rejected procedures
+            }
+
          }
-      } catch (IOException e) {
+      } catch (IOException e)
+      {
          e.printStackTrace();
       }
    }
 
 
-   public void removeWorker(ServerWorker serverWorker) {
-
-      workerList.remove(serverWorker);
+   public void removeWorker(ServerWorker serverWorker)
+   {
+      _workerList.remove(serverWorker);
+      numConnections--;
    }
 
 
-   public void broadcast(String msg) {
+   public void addWorker(ServerWorker serverWorker)
+   {
+      _workerList.add(serverWorker);
+      numConnections++;
+      serverWorker.start();
+   }
 
-      System.out.println("Broadcast called in server...");
 
-      System.out.println("msg : " + msg);
+   public void broadcast(String msg)
+   {
 
       StringBuilder msgToSend = new StringBuilder();
 
@@ -61,16 +83,40 @@ public class Server extends Thread {
       msgToSend.append(msg);
       msgToSend.append("\n");
 
-      System.out.println("modified msg : " + msgToSend);
-
-      for (ServerWorker worker : workerList) {
-         System.out.println("Found worker : " + worker.getLogin());
-         try {
+      for (ServerWorker worker : _workerList)
+      {
+         try
+         {
             worker.send(msgToSend.toString());
-         } catch (IOException e) {
+         } catch (IOException e)
+         {
             e.printStackTrace();
          }
       }
+   }
+
+
+   public void relayMsg(String userName, String msgToSend)
+   {
+
+      for (ServerWorker worker : _workerList)
+      {
+         if (worker.getUserName().equalsIgnoreCase(userName))
+         {
+            try
+            {
+               worker.send(msgToSend);
+            } catch (IOException e)
+            {
+               e.printStackTrace();
+            }
+         }
+      }
+   }
+
+   public void requestGameStart()
+   {
+      _gc.startGame();
    }
 
 
