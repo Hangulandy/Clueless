@@ -12,11 +12,12 @@ public class GameController
 {
 
    private Server _server;
-   private ArrayList<Player> _players;
+   private ArrayList<Player> _players; // TODO make into circular linked list
    private boolean _gameStarted = false;
    private GameBoardPlaceHolder _gb;
-   private DeckControllerPlaceHolder _deckController;
+   DeckControllerPlaceHolder _deckController;
    private int turn = 0;
+   private boolean _gameOver;
 
 
    public GameController(Server server)
@@ -54,7 +55,7 @@ public class GameController
    public void addPlayer(String userID)
    {
 
-      Player player = new Player(userID);
+      Player player = new Player(userID, this);
       System.out.println(player.toString());
       _players.add(player);
       _server.broadcast(player.toString());
@@ -74,6 +75,21 @@ public class GameController
    }
 
 
+   public void runGame()
+   {
+      Player currentPlayer;
+      while (!_gameOver)
+      {
+         if (turn >= _players.size())
+         {
+            turn = 0;
+         }
+         currentPlayer = _players.get(turn);
+         currentPlayer.executeTurn();
+      }
+   }
+
+
    public void suggest(String suspect, String weapon, String room)
    {
 
@@ -85,6 +101,7 @@ public class GameController
       System.out.println(msg);
       _server.broadcast(msg);
 
+      // TODO this should cycle through the players, not check the deck
       boolean suggestionCorrect = _deckController.checkSuggestion(suspect, weapon, room);
 
       System.out.println("Returned : " + suggestionCorrect);

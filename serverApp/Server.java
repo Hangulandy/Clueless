@@ -16,7 +16,7 @@ public class Server extends Thread
 {
 
    private final int _serverPort;
-   private GameController _gc;
+   private GameController _gc; // TODO make into a singleton class
    private int _numConnections = 0;
 
    private ArrayList<ServerWorker> _workerList = new ArrayList<>();
