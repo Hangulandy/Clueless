@@ -8,9 +8,12 @@ public class DeckControllerPlaceHolder
    }
 
 
-   public boolean checkSuggestion(String suspect, String weapon, String room)
+   public String getLocation(Player player)
    {
+      return "";
+   }
 
+   public boolean isRoom(String location){
       return true;
    }
 }
