@@ -11,6 +11,8 @@ public class Player
    private String guessedSuspect;
    private String guessedWeapon;
    private String guessedRoom;
+   private String location;
+   //TODO private Hand playerHand;
 
    Player(String userName, GameController gameController)
    {
@@ -20,7 +22,7 @@ public class Player
       switch (playerNum)
       {
          case 1:
-            _characterName = "Ms._Scarlett";
+            _characterName = "Miss_Scarlett";
             break;
          case 2:
             _characterName = "Col._Mustard";
@@ -71,10 +73,11 @@ public class Player
 
       if (_isActive)
       {
+         //TODO Kira add gamecontroller ask gameboard what moves are available
          //prompt user for move command and then execute command
          String moveCMD = getMoveCommand();
          if (moveCMD != null){
-            this._gc.move(moveCMD);
+            _gc.move(moveCMD);
          }
 
          //first check if the player is in a room and therefore if they are allowed to make a suggestion
@@ -83,11 +86,13 @@ public class Player
             if (getSuggestionCommand()){
                _gc.suggest(guessedSuspect, guessedWeapon, _gc.getPlayerLocation(this));
             }
+            //TODO Kira need to move suggested player to the room
          }
 
          //prompt user for accusation and then execute command
-         if (getAccusationCommand()){
-            _isActive = this._gc.accuse(guessedSuspect, guessedWeapon, guessedRoom);
+         if (getAccusationCommand() != null){
+            //should check whether suggestion is null
+            _isActive = _gc.accuse(guessedSuspect, guessedWeapon, guessedRoom);
          }
       } else
       {
@@ -102,16 +107,18 @@ public class Player
    }
 
    private boolean getSuggestionCommand(){
+      //TODO implement suggestion object (consists of three cards)
       //TODO Andy ask if user wants to suggest
       //TODO If so, set player variables guessedSuspect and guessedWeapon
-      //TODO return true if user wants to suggest, return false if user does not
+      //TODO return suggestion object
       return false;
    }
 
-   private boolean getAccusationCommand(){
+   private String getAccusationCommand(){
       //TODO Andy ask if user wants to accuse. If so, set player variables guessedSuspect, guessedWeapon, and guessedRoom
+      //should return a suggestion
       //return true if user wants to suggest, return false if user does not
-      return false;
+      return null;
    }
 
    public String disproveSuggestion(String suggestedSuspect, String suggestedWeapon, String suggestedRoom){
@@ -124,5 +131,17 @@ public class Player
    public void receiveMessage(String msg){
       //TODO Andy take message and broadcast to client
    }
+
+   public String getLocation(){
+      return "";
+   }
+
+   public boolean setLocation(String loc){
+      location = loc;
+      return true;
+   }
+
+   //TODO getHand(){}
+   //TODO setHand(){}
 
 }

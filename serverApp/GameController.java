@@ -49,6 +49,7 @@ public class GameController
       {
          _server.broadcast("Game has already been started...");
       }
+      //deckcontroller.dealCards(playerList);
       turn = getFirstTurn();
       runGame();
    }
@@ -100,16 +101,21 @@ public class GameController
       System.out.println(msg);
       _server.broadcast(msg);
 
-      int marker = turn + 5; //start with the user who preceded the suggester
+      int marker = turn + 1; //start with the user who preceded the suggester
       marker = marker % 6;
       String disprovingCard = null;
       while(marker != turn && disprovingCard == null){
+         //TODO broadcast "asking marker if they can disprove"
+         //TODO look into players' hands and check if they can disprove
          disprovingCard = _players.get(marker).disproveSuggestion(suspect, weapon, room);
          if (disprovingCard != null){
             _server.broadcast("The suggestion has been disproven by " + _players.get(marker).getUserID());
             _players.get(turn).receiveMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
          }
-         marker = marker + 6;
+         else{
+            //TODO tell everyone marker passed
+         }
+         marker = marker ++;
          marker = marker % 6;
       }
       if(disprovingCard == null){
