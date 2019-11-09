@@ -8,6 +8,9 @@ public class Player
    private String _characterName;
    private boolean _isActive = true;
    private GameController _gc;
+   private String guessedSuspect;
+   private String guessedWeapon;
+   private String guessedRoom;
 
    Player(String userName, GameController gameController)
    {
@@ -68,58 +71,58 @@ public class Player
 
       if (_isActive)
       {
-         this.move();
-         this.suggest();
-         this.accuse();
+         //prompt user for move command and then execute command
+         String moveCMD = getMoveCommand();
+         if (moveCMD != null){
+            this._gc.move(moveCMD);
+         }
+
+         //first check if the player is in a room and therefore if they are allowed to make a suggestion
+         //prompt user for suggestion and then execute command
+         if(_gc.canMakeSuggestion(this)){
+            if (getSuggestionCommand()){
+               _gc.suggest(guessedSuspect, guessedWeapon, _gc.getPlayerLocation(this));
+            }
+         }
+
+         //prompt user for accusation and then execute command
+         if (getAccusationCommand()){
+            _isActive = this._gc.accuse(guessedSuspect, guessedWeapon, guessedRoom);
+         }
       } else
       {
-         // TODO return to GameController
+         return false;
       }
-      return true; // TODO logic of accusation success
+      return true;
    }
 
-
-   private void move()
-   {
-      // TODO
-   }
-
-
-   private void suggest()
-   {
-      // TODO
-   }
-
-
-   private void accuse()
-   {
-      // TODO prompt messageClient to make accusation or pass (Andy)
-
-      // TODO prompt messageClient for suspect (Andy)
-
-      // TODO prompt messageClient for weapon (Andy)
-
-      // TODO prompt messageClient for room (Andy)
-
-      // TODO show messageClient the cards (Andy)
-
-      String suspect = "";
-      String weapon = "";
-      String room = "";
-
-      if (_gc._deckController.checkAccusation(suspect, weapon, room))
-      {
-         // TODO win
-      } else
-      {
-         this._isActive = false;
-      }
-   }
-
-   private String promptForSuspect(){
-      // TODO Andy implement with messageClient
+   private String getMoveCommand(){
+      //TODO Andy ask if user wants to move and get Move selection from User
       return "";
    }
 
+   private boolean getSuggestionCommand(){
+      //TODO Andy ask if user wants to suggest
+      //TODO If so, set player variables guessedSuspect and guessedWeapon
+      //TODO return true if user wants to suggest, return false if user does not
+      return false;
+   }
+
+   private boolean getAccusationCommand(){
+      //TODO Andy ask if user wants to accuse. If so, set player variables guessedSuspect, guessedWeapon, and guessedRoom
+      //return true if user wants to suggest, return false if user does not
+      return false;
+   }
+
+   public String disproveSuggestion(String suggestedSuspect, String suggestedWeapon, String suggestedRoom){
+      //TODO Andy ask if user can disprove
+      //If yes, return string of card the user "shows" to disprove
+      //If no, return null;
+      return null;
+   }
+
+   public void receiveMessage(String msg){
+      //TODO Andy take message and broadcast to client
+   }
 
 }
