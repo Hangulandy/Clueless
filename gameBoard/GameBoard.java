@@ -190,4 +190,6 @@ public class GameBoard{
 			} 
 		} while (!input.equals("q")); 
 	}
+
+	//TODO method getAdjacentRooms
 }
