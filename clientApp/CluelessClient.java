@@ -6,8 +6,6 @@ This implementation is borrowed from a tutorial at https://fullstackmastery.com/
 adapted for use in this system by Andrew Johnson.
  */
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ public class CluelessClient
    private OutputStream _serverOut;
    private BufferedReader _bufferedIn;
    private String _userName;
-   private boolean keepPlaying;
+   private boolean keepAsking;
 
    private Scanner _scanner = new Scanner(System.in);
 
@@ -36,7 +34,7 @@ public class CluelessClient
 
       this._serverName = serverName;
       this._serverPort = serverPort;
-      this.keepPlaying = true;
+      this.keepAsking = true;
    }
 
 
@@ -70,7 +68,7 @@ public class CluelessClient
          public void onMessage(String fromLogin, String msgBody)
          {
 
-            System.out.println("You got a message from " + fromLogin + " ===>" + msgBody);
+            System.out.println("You got a message from " + fromLogin + " ===> " + msgBody);
          }
       });
 
@@ -85,7 +83,7 @@ public class CluelessClient
 
          if (client.login(client._userName))
          {
-            while (client.keepPlaying)
+            while (client.keepAsking)
             {
                client.MenuSequence();
             }
@@ -100,114 +98,45 @@ public class CluelessClient
    }
 
 
-   private void printMainMenu()
-   {
-
-      System.out.println("Menu Options: ");
-      System.out.println("1. Send a message to everybody");
-      System.out.println("2. Start game");
-      System.out.println("3. Move your character");
-      System.out.println("4. Make a suggestion");
-      System.out.println("5. Make an accusation");
-      System.out.println("6. Logoff");
-   }
-
-
    private void MenuSequence()
    {
 
       printMainMenu();
-      int userChoice = askUserForN("Please choose an option from the menu:", 1, 6);
+      int userChoice = askUserForN(1, 3);
       switch (userChoice)
       {
          case 1:
             broadcastMsg();
             break;
          case 2:
+            keepAsking = false;
             requestStart();
             break;
          case 3:
-            requestMove("Conservatory");
-            break;
-         case 4:
-            suggest("Ms._Scarlett", "Rope", "Conservatory");
-            break;
-         case 5:
-            accuse("Ms._Scarlett", "Rope", "Conservatory");
-            break;
-         case 6:
             try
             {
-               keepPlaying = false;
+               keepAsking = false;
                logoff();
             } catch (IOException e)
             {
-               // TODO Auto-generated catch block
                e.printStackTrace();
             }
             break;
       }
-
    }
 
 
-   private void requestStart()
+   private void printMainMenu()
    {
 
-      String cmd = "start\n";
-      try
-      {
-         _serverOut.write(cmd.getBytes());
-      } catch (IOException e)
-      {
-         System.out.println("The message failed to send.");
-      }
-
+      System.out.println("Menu Options: ");
+      System.out.println("1. Send a message to everybody");
+      System.out.println("2. Start game");
+      System.out.println("3. Logoff");
    }
 
 
-   private void requestMove(String room)
-   {
-      String cmd = "move " + room + "\n";
-      try
-      {
-         _serverOut.write(cmd.getBytes());
-      } catch (IOException e)
-      {
-         e.printStackTrace();
-      }
-   }
-
-
-   private void suggest(String character, String weapon, String room)
-   {
-
-      String cmd = "suggest " + character + " " + weapon + " " + room + "\n";
-      try
-      {
-         _serverOut.write(cmd.getBytes());
-      } catch (IOException e)
-      {
-         e.printStackTrace();
-      }
-   }
-
-
-   private void accuse(String suspect, String weapon, String room)
-   {
-
-      String cmd = "accuse " + suspect + " " + weapon + " " + room + "\n";
-      try
-      {
-         _serverOut.write(cmd.getBytes());
-      } catch (IOException e)
-      {
-         e.printStackTrace();
-      }
-   }
-
-
-   private int askUserForN(String promptMSG, int min, int max)
+   private int askUserForN(int min, int max)
    {
 
       boolean valid = false;
@@ -217,7 +146,7 @@ public class CluelessClient
 
       do
       {
-         System.out.println(promptMSG);
+         System.out.println("Please Enter Your Choice: ");
 
          if (this._scanner.hasNextInt())
          {
@@ -246,12 +175,19 @@ public class CluelessClient
    }
 
 
-   private void msg(String sendTo, String msgBody) throws IOException
+   private void requestStart()
    {
 
-      String cmd = "msg " + sendTo + " " + msgBody + "\n";
-      _serverOut.write(cmd.getBytes());
+      String cmd = "start\n";
+      try
+      {
+         _serverOut.write(cmd.getBytes());
+      } catch (IOException e)
+      {
+         System.out.println("The message failed to send.");
+      }
    }
+
 
 
    private void receiveUserName()
@@ -319,6 +255,7 @@ public class CluelessClient
          String line;
          while ((line = _bufferedIn.readLine()) != null)
          {
+            System.out.println("Received message : " + line);
             String[] tokens = line.split(" ");
             if (tokens != null && tokens.length > 0)
             {
@@ -332,6 +269,21 @@ public class CluelessClient
                } else if ("msg".equalsIgnoreCase(cmd))
                {
                   handleMessage(tokens);
+               } else if ("move".equalsIgnoreCase(cmd))
+               {
+                  handleMultipleChoicePrompt(tokens);
+               } else if ("suspect".equalsIgnoreCase(cmd))
+               {
+                  handleMultipleChoicePrompt(tokens);
+               } else if ("weapon".equalsIgnoreCase(cmd))
+               {
+                  handleMultipleChoicePrompt(tokens);
+               } else if ("room".equalsIgnoreCase(cmd))
+               {
+                  handleMultipleChoicePrompt(tokens);
+               } else if ("askAccuse".equalsIgnoreCase(cmd))
+               {
+                  handleAskAccuse(tokens);
                }
             }
          }
@@ -348,6 +300,62 @@ public class CluelessClient
       }
    }
 
+
+   private void handleMultipleChoicePrompt(String[] tokens)
+   {
+
+      int choice = generateMenu(tokens);
+
+      sendReply(tokens[0], tokens[choice]);
+
+   }
+
+
+   private int generateMenu(String[] tokens)
+   {
+
+      System.out.println("\nPlease select a choice below for the " + tokens[0] + ":");
+
+      for (int i = 1; i < tokens.length; i++)
+      {
+         System.out.println(i + " " + tokens[i]);
+      }
+
+      System.out.println();
+
+      return askUserForN(1, tokens.length);
+   }
+
+
+   private void sendReply(String cmd, String chosenItem)
+   {
+      String outMsg = cmd + " " + chosenItem + "\n";
+      try
+      {
+         _serverOut.write(outMsg.getBytes());
+         System.out.println("Sent message : " + outMsg);
+      } catch (IOException e)
+      {
+         System.out.println("The message failed to send.");
+      }
+   }
+
+
+
+   private void handleAskAccuse(String[] tokens)
+   {
+
+      String prompt = concatenateTokens(tokens, 1, tokens.length - 1);
+
+      System.out.println(prompt);
+
+      String[] menuItems = {"answer", "Yes", "No"};
+
+      int choice = generateMenu(menuItems);
+
+      sendReply("answer", menuItems[choice]);
+
+   }
 
    /*
    The handleMessage method processes a text message received from the ServerWorker

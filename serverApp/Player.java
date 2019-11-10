@@ -1,28 +1,49 @@
-import javax.smartcardio.Card;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Player
 {
-   private final int playerNum;
+
+   private final int _playerNum;
    public static int numPlayers = 0; // class variable, not instance variable
+   private String _characterName = "";
+   private Room _currentLocation;
    private String _userName;
-   private String _characterName;
-   private boolean _isActive = true;
-   private GameController _gc;
-   private String guessedSuspect;
-   private String guessedWeapon;
-   private String guessedRoom;
-   private String location;
-   //TODO private Hand playerHand;
 
-   Player(String userName, GameController gameController)
+
+   public ServerWorker get_serverWorker()
    {
-      _userName = userName;
-      playerNum = ++numPlayers; // set this player number to current player count
 
-      switch (playerNum)
+      return _serverWorker;
+   }
+
+
+   private ServerWorker _serverWorker;
+   private boolean _isActive;
+   private ArrayList<GameCard> _hand;
+   private String[] _recentReply = null;
+
+
+   public ArrayList<GameCard> getPlayerHand()
+   {
+
+      return _hand;
+   }
+
+
+   Player(ServerWorker serverWorker)
+   {
+
+      _userName = serverWorker.getUserName();
+      _serverWorker = serverWorker;
+      _isActive = true;
+      _playerNum = ++numPlayers; // set this player number to current player count
+      _hand = new ArrayList<GameCard>();
+
+      switch (_playerNum)
       {
          case 1:
-            _characterName = "Miss_Scarlett";
+            _characterName = "Ms._Scarlett";
             break;
          case 2:
             _characterName = "Col._Mustard";
@@ -41,107 +62,159 @@ public class Player
             break;
       }
 
-      this._gc = gameController;
-
-      System.out.println("Player successfully created for " + userName);
+      System.out.println("Player successfully created for " + _userName);
    }
 
-   public String getCharacterName()
-   {
-      return _characterName;
-   }
-
-   public void setPlayerName(String character)
-   {
-      this._characterName = character;
-   }
 
    public String getUserID()
    {
+
       return _userName;
    }
 
+
    public String toString()
    {
-      String out = getCharacterName() + " being played by " + _userName;
+
+      String out = _characterName + " being played by " + _userName;
       return out;
    }
 
 
-   public boolean executeTurn()
+   public boolean executeTurn(ArrayList<GameCard> deck) throws InterruptedException
    {
 
-      if (_isActive)
+      try
       {
-         //TODO Kira add gamecontroller ask gameboard what moves are available
-         //prompt user for move command and then execute command
-         String moveCMD = getMoveCommand();
-         if (moveCMD != null){
-            _gc.move(moveCMD);
-         }
-
-         //first check if the player is in a room and therefore if they are allowed to make a suggestion
-         //prompt user for suggestion and then execute command
-         if(_gc.canMakeSuggestion(this)){
-            if (getSuggestionCommand()){
-               _gc.suggest(guessedSuspect, guessedWeapon, _gc.getPlayerLocation(this));
-            }
-            //TODO Kira need to move suggested player to the room
-         }
-
-         //prompt user for accusation and then execute command
-         if (getAccusationCommand() != null){
-            //should check whether suggestion is null
-            _isActive = _gc.accuse(guessedSuspect, guessedWeapon, guessedRoom);
-         }
-      } else
+         getMoveCommand();
+         // getSuggestionCommand(deck);
+         // getAccusationCommand(deck);
+      } catch (IOException e)
       {
-         return false;
+         e.printStackTrace();
       }
+
       return true;
    }
 
-   private String getMoveCommand(){
-      //TODO Andy ask if user wants to move and get Move selection from User
-      return "";
-   }
 
-   private boolean getSuggestionCommand(){
-      //TODO implement suggestion object (consists of three cards)
-      //TODO Andy ask if user wants to suggest
-      //TODO If so, set player variables guessedSuspect and guessedWeapon
-      //TODO return suggestion object
-      return false;
-   }
+   private String getMoveCommand() throws IOException, InterruptedException
+   {
 
-   private String getAccusationCommand(){
-      //TODO Andy ask if user wants to accuse. If so, set player variables guessedSuspect, guessedWeapon, and guessedRoom
-      //should return a suggestion
-      //return true if user wants to suggest, return false if user does not
+      StringBuilder msg = new StringBuilder();
+
+      msg.append("move");
+
+      ArrayList<Room> possibleMove = _currentLocation.getPossibleMoves();
+
+      if (possibleMove.size() == 0)
+      {
+         return null;
+      }
+
+      for (Room room : possibleMove)
+      {
+         msg.append(" " + room.get_roomName());
+      }
+
+      msg.append("\n");
+
+      _serverWorker.sendForReply(msg.toString(), this);
+
       return null;
+
    }
 
-   public String disproveSuggestion(String suggestedSuspect, String suggestedWeapon, String suggestedRoom){
-      //TODO Andy ask if user can disprove
-      //If yes, return string of card the user "shows" to disprove
-      //If no, return null;
-      return null;
+
+   private Suggestion getSuggestionCommand(ArrayList<GameCard> deck) throws IOException
+   {
+
+      _serverWorker.send("It is time to make a suggestion...\n");
+
+      getSuggest(deck, GameCard.CardType.Suspect);
+      // getSuggest(deck, GameCard.CardType.Weapon);
+
+      return new Suggestion("", "", _currentLocation.get_roomName());
    }
 
-   public void receiveMessage(String msg){
-      //TODO Andy take message and broadcast to client
+
+   private void getSuggest(ArrayList<GameCard> deck, GameCard.CardType cardType) throws IOException
+   {
+
+      StringBuilder msg = new StringBuilder();
+
+      msg.append(cardType);
+      msg.append(" ");
+
+      for (GameCard card : deck)
+      {
+         if (card.getType() == cardType)
+         {
+            msg.append(card.getCardName());
+            msg.append(" ");
+         }
+      }
+
+      msg.append("\n");
+
+      _serverWorker.sendForReply(msg.toString(), this);
    }
 
-   public String getLocation(){
-      return "";
+
+   private Suggestion getAccusationCommand(ArrayList<GameCard> deck) throws IOException, InterruptedException
+   {
+
+      return new Suggestion("", "", this._currentLocation.get_roomName());
+
    }
 
-   public boolean setLocation(String loc){
-      location = loc;
-      return true;
+
+   private void askIfWantAccuse() throws IOException
+   {
+
+      _serverWorker.sendForReply("askAccuse Would you like to make an accusation?\n", this);
    }
 
-   //TODO getHand(){}
-   //TODO setHand(){}
+
+   public void disproveSuggestion(ArrayList<GameCard> matchingCards) throws IOException
+   {
+
+      StringBuilder msg = new StringBuilder();
+
+      msg.append("disprove");
+
+      for (GameCard card : matchingCards)
+      {
+         msg.append(card.getCardName());
+         msg.append(" ");
+      }
+
+      msg.append("\n");
+
+      _serverWorker.sendForReply(msg.toString(), this);
+   }
+
+
+   public void receiveReplyFromServerWorker(String[] tokens)
+   {
+
+      _recentReply = tokens;
+      System.out.println("Received Message : " + tokens[0]);
+   }
+
+
+   public Room getLocation()
+   {
+
+      return _currentLocation;
+   }
+
+
+   public String getCharacterName()
+   {
+
+      return _characterName;
+   }
+
 
 }

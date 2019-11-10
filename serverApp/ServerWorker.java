@@ -17,6 +17,7 @@ public class ServerWorker extends Thread
    private final Server _server;
    private String _userName = null;
    private OutputStream _outputStream;
+   private Player _replyToPlayer;
 
 
    /*
@@ -65,6 +66,7 @@ public class ServerWorker extends Thread
       String line;
       while ((line = reader.readLine()) != null)
       {
+         System.out.println(line);
          String[] tokens = line.split(" ");
          if (tokens != null && tokens.length > 0)
          {
@@ -85,15 +87,9 @@ public class ServerWorker extends Thread
             } else if ("start".equalsIgnoreCase(cmd))
             {
                handleStartGame();
-            } else if ("move".equalsIgnoreCase(cmd))
+            } else
             {
-               handleMove(tokens);
-            } else if ("suggest".equalsIgnoreCase(cmd))
-            {
-               handleSuggest(tokens);
-            } else if ("accuse".equalsIgnoreCase(cmd))
-            {
-               handleAccuse(tokens);
+               handleReply(tokens);
             }
          }
       }
@@ -102,31 +98,18 @@ public class ServerWorker extends Thread
    }
 
 
-   private void handleMove(String[] tokens)
+   private void handleReply(String[] tokens)
    {
 
-      _server.move(tokens);
-   }
-
-
-   private void handleAccuse(String[] tokens)
-   {
-
-      _server.accuse(tokens);
-   }
-
-
-   private void handleSuggest(String[] tokens)
-   {
-
-      _server.suggest(tokens);
+      System.out.println("Reply received : " + concatenateTokens(tokens, 1, tokens.length - 1));
+         _replyToPlayer.receiveReplyFromServerWorker(tokens);
    }
 
 
    /*
    The handleStartGame method will be called when a CluelessClient instance requests so. The rest is self explanatory.
     */
-   private void handleStartGame()
+   private void handleStartGame() throws InterruptedException
    {
 
       _server.requestGameStart();
@@ -275,7 +258,28 @@ public class ServerWorker extends Thread
       if (_userName != null)
       {
          _outputStream.write(outMsg.getBytes());
+         System.out.println("Message sent : " + outMsg);
       }
+   }
+
+
+   public void sendTextMessage(String msg) throws IOException
+   {
+
+      StringBuilder outMsg = new StringBuilder();
+
+      outMsg.append("msg system ");
+
+      send(outMsg.toString());
+
+   }
+
+
+   public void sendForReply(String toString, Player player) throws IOException
+   {
+
+      _replyToPlayer = player;
+      send(toString);
    }
 
 

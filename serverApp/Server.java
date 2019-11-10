@@ -123,27 +123,9 @@ public class Server extends Thread
       }
    }
 
-   public void requestGameStart()
+   public void requestGameStart() throws InterruptedException
    {
       _gc.startGame();
-   }
-
-
-   public void suggest(String[] tokens)
-   {
-      _gc.suggest(tokens[1], tokens[2], tokens[3]);
-   }
-
-
-   public void accuse(String[] tokens)
-   {
-      _gc.accuse(tokens[1], tokens[2], tokens[3]);
-   }
-
-
-   public void move(String[] tokens)
-   {
-      _gc.move(tokens[1]);
    }
 
 
