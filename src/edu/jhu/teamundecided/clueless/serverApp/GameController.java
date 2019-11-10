@@ -74,18 +74,21 @@ public class GameController
 
    public void runGame() throws IOException, InterruptedException {
       Player currentPlayer;
+      int numberOfPlayers = _players.size();
       while (!_gameOver)
       {
          currentPlayer = _players.get(turn);
          executeTurn(currentPlayer);
          turn++;
-         turn = turn % 6;
+         turn = turn % numberOfPlayers;
       }
    }
 
    public void executeTurn(Player currentPlayer) throws IOException, InterruptedException {
       if(currentPlayer.getStatus()){
          Room currentLocation = currentPlayer.getLocation();
+         // You can uncomment this if you want to make sure the program is successfully looping through here
+         // _server.broadcast(currentPlayer.getCharacterName() + " is currently in the " + currentLocation.getRoomName());
          boolean canMove = true;
 //         if (canMove){
 //            String desiredLocation = currentPlayer.getMoveCommand();

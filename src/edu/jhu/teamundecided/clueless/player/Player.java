@@ -45,21 +45,27 @@ public class Player
       {
          case 1:
             _characterName = "Ms._Scarlett";
+            _currentLocation = new Room("S01");
             break;
          case 2:
             _characterName = "Col._Mustard";
+            _currentLocation = new Room("S02");
             break;
          case 3:
             _characterName = "Mrs._White";
+            _currentLocation = new Room("S03");
             break;
          case 4:
             _characterName = "Mrs._Peacock";
+            _currentLocation = new Room("S04");
             break;
          case 5:
             _characterName = "Prof._Plum";
+            _currentLocation = new Room("S05");
             break;
          case 6:
             _characterName = "Mr._Green";
+            _currentLocation = new Room("S06");
             break;
       }
 
