@@ -68,45 +68,12 @@ public class Player
    }
 
 
-   public boolean executeTurn()
-   {
-
-      if (_isActive)
-      {
-         //TODO Kira add gamecontroller ask gameboard what moves are available
-         //prompt user for move command and then execute command
-         String moveCMD = getMoveCommand();
-         if (moveCMD != null){
-            _gc.move(moveCMD);
-         }
-
-         //first check if the player is in a room and therefore if they are allowed to make a suggestion
-         //prompt user for suggestion and then execute command
-         if(_gc.canMakeSuggestion(this)){
-            if (getSuggestionCommand()){
-               _gc.suggest(guessedSuspect, guessedWeapon, _gc.getPlayerLocation(this));
-            }
-            //TODO Kira need to move suggested player to the room
-         }
-
-         //prompt user for accusation and then execute command
-         if (getAccusationCommand() != null){
-            //should check whether suggestion is null
-            _isActive = _gc.accuse(guessedSuspect, guessedWeapon, guessedRoom);
-         }
-      } else
-      {
-         return false;
-      }
-      return true;
-   }
-
-   private String getMoveCommand(){
+   public String getMoveCommand(){
       //TODO Andy ask if user wants to move and get Move selection from User
       return "";
    }
 
-   private boolean getSuggestionCommand(){
+   public boolean getSuggestionCommand(){
       //TODO implement suggestion object (consists of three cards)
       //TODO Andy ask if user wants to suggest
       //TODO If so, set player variables guessedSuspect and guessedWeapon
@@ -114,7 +81,7 @@ public class Player
       return false;
    }
 
-   private String getAccusationCommand(){
+   public String getAccusationCommand(){
       //TODO Andy ask if user wants to accuse. If so, set player variables guessedSuspect, guessedWeapon, and guessedRoom
       //should return a suggestion
       //return true if user wants to suggest, return false if user does not
@@ -133,12 +100,25 @@ public class Player
    }
 
    public String getLocation(){
-      return "";
+      return location;
    }
 
    public boolean setLocation(String loc){
       location = loc;
       return true;
+   }
+
+   public boolean getStatus(){
+      if(_isActive){
+         return true;
+      }
+      else{
+         return false;
+      }
+   }
+
+   public void setStatus(boolean status){
+      _isActive = status;
    }
 
    //TODO getHand(){}
