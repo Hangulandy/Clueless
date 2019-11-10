@@ -1,4 +1,4 @@
-/*
+package edu.jhu.teamundecided.clueless.serverApp;/*
 The Game Flow subsystem will act as the messenger between the user interface and the other subsystems, the
 abstraction of the whole system. Tracks which Player has a turn, queries other subsystems as to the viability
 of the user's inputs. Offers options to user to Move, Guess, Deny, Accuse, etc.
@@ -6,6 +6,10 @@ of the user's inputs. Offers options to user to Move, Guess, Deny, Accuse, etc.
 Class written by Kira Ullman, edited by Andrew Johnson
 */
 
+import edu.jhu.teamundecided.clueless.deck.Suggestion;
+import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
+import edu.jhu.teamundecided.clueless.player.Player;
+import edu.jhu.teamundecided.clueless.deck.DeckController;
 import java.util.ArrayList;
 
 public class GameController
@@ -14,8 +18,8 @@ public class GameController
    private Server _server;
    private ArrayList<Player> _players; // TODO make into circular linked list
    private boolean _gameStarted;
-   private GameBoardPlaceHolder _gb;
-   DeckControllerPlaceHolder _deckController;
+   private GameBoard _gb;
+   DeckController _deckController;
    private int turn;
    private boolean _gameOver;
 
@@ -24,8 +28,8 @@ public class GameController
    {
       _server = server;
       _players = new ArrayList<Player>();
-      _gb = new GameBoardPlaceHolder();
-      _deckController = new DeckControllerPlaceHolder();
+      _gb = new GameBoard();
+      _deckController = new DeckController();
       turn = 0;
       _gameStarted = false;
    }
@@ -69,49 +73,25 @@ public class GameController
       while (!_gameOver)
       {
          currentPlayer = _players.get(turn);
-         executeTurn(currentPlayer);
+         currentPlayer.executeTurn();
          turn++;
          turn = turn % 6;
       }
    }
 
-   public void executeTurn(Player currentPlayer){
-      if(currentPlayer.getStatus()){
-         String currentLocation = currentPlayer.getLocation();
-         boolean canMove = true;
-         //TODO canMove = _gb.getAdjacentRooms()
-         //TODO tell player the adjacent Rooms so Player can broadcast to user
-         if (canMove){
-            String desiredLocation = currentPlayer.getMoveCommand();
-            move(currentPlayer, desiredLocation);
-         }
 
-         boolean canSuggest = true;
-         //TODO canSuggest = _gb.isRoom(currentPlayer.getLocation());
-         //TODO Suggestion sug = currentPlayer.getSuggestionCommand();
-         suggest("", "", "");
-         _gb.movePlayer("", "");
-
-         /*Accusation acc = currentPlayer.getAccusationCommand();
-         if (acc != null){
-            accuse(acc);
-          */
-      }
-   }
-
-
-   public void move(Player player, String room)
+   public void move(String room)
    {
-      boolean success = _gb.movePlayer(player.getCharacterName(), room);
+      //TODO Need to refactor how Move Player works.
+//      boolean success = _gb.movePlayer(_players.get(turn).getCharacterName(), room);
 
-      if (success)
-      {
-         _server.broadcast(player.getCharacterName() + " moves to the " + room);
-         player.setLocation(room);
-      } else
-      {
-         _server.broadcast(player.getCharacterName() + " invalid move");
-      }
+//      if (success)
+//      {
+//         _server.broadcast(_players.get(turn).getCharacterName() + " moves to the " + room);
+//      } else
+//      {
+//         _server.broadcast(_players.get(turn).getCharacterName() + " invalid move");
+//      }
    }
 
 
@@ -160,7 +140,7 @@ public class GameController
       System.out.println(msg);
       _server.broadcast(msg);
 
-      boolean accusationCorrect = _deckController.checkAccusation(suspect, weapon, room);
+      boolean accusationCorrect = _deckController.checkAccusation(new Suggestion(suspect, room, weapon));
 
       if (accusationCorrect)
       {

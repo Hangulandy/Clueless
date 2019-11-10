@@ -81,6 +81,7 @@ public class Player
    }
 
 
+<<<<<<< HEAD
    public boolean executeTurn(ArrayList<GameCard> deck) throws InterruptedException
    {
 
@@ -166,6 +167,26 @@ public class Player
 
       return new Suggestion("", "", this._currentLocation.get_roomName());
 
+=======
+   public String getMoveCommand(){
+      //TODO Andy ask if user wants to move and get Move selection from User
+      return "";
+   }
+
+   public boolean getSuggestionCommand(){
+      //TODO implement suggestion object (consists of three cards)
+      //TODO Andy ask if user wants to suggest
+      //TODO If so, set player variables guessedSuspect and guessedWeapon
+      //TODO return suggestion object
+      return false;
+   }
+
+   public String getAccusationCommand(){
+      //TODO Andy ask if user wants to accuse. If so, set player variables guessedSuspect, guessedWeapon, and guessedRoom
+      //should return a suggestion
+      //return true if user wants to suggest, return false if user does not
+      return null;
+>>>>>>> origin/master
    }
 
 
@@ -202,11 +223,16 @@ public class Player
       System.out.println("Received Message : " + tokens[0]);
    }
 
+<<<<<<< HEAD
 
    public Room getLocation()
    {
 
       return _currentLocation;
+=======
+   public String getLocation(){
+      return location;
+>>>>>>> origin/master
    }
 
 
@@ -216,5 +242,23 @@ public class Player
       return _characterName;
    }
 
+<<<<<<< HEAD
+=======
+   public boolean getStatus(){
+      if(_isActive){
+         return true;
+      }
+      else{
+         return false;
+      }
+   }
+
+   public void setStatus(boolean status){
+      _isActive = status;
+   }
+
+   //TODO getHand(){}
+   //TODO setHand(){}
+>>>>>>> origin/master
 
 }
