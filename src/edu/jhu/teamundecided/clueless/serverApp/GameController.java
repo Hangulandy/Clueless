@@ -6,6 +6,7 @@ of the user's inputs. Offers options to user to Move, Guess, Deny, Accuse, etc.
 Class written by Kira Ullman, edited by Andrew Johnson
 */
 
+import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
 import edu.jhu.teamundecided.clueless.player.Player;
 import edu.jhu.teamundecided.clueless.deck.DeckController;
@@ -139,7 +140,7 @@ public class GameController
       System.out.println(msg);
       _server.broadcast(msg);
 
-      boolean accusationCorrect = _deckController.checkAccusation(suspect, weapon, room);
+      boolean accusationCorrect = _deckController.checkAccusation(new Suggestion(suspect, room, weapon));
 
       if (accusationCorrect)
       {
