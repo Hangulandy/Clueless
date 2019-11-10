@@ -113,54 +113,18 @@ public class DeckController
     }
 
     // Method to check an accusation
-    public boolean checkAccusation(String suspect, String room, String weapon)
+    public boolean checkAccusation(Suggestion suggestion)
     {
-        String accusation[] = new String[]{suspect, room, weapon};
-        Card.CardType cardTypes[] = Card.CardType.values();
-
-        int index = 0;
-        // Suspect
         for (Card card : _CaseFile)
         {
-            if (card.getType().equals(cardTypes[index]))
+            if(!card.getCardName().equals(suggestion.getCard(card.getType()).getCardName()))
             {
-                if (!card.getCardName().equals(accusation[index]))
-                {
-                    handleMessage("Your accusation is Wrong!");
-                    return false;
-                }
-                index++;
+                return false;
             }
         }
 
         handleMessage("Your accusation is Correct!");
         return true;
-    }
-
-    // Method to check Player hands for suggestion cards
-    // Player turn order:
-    // Miss Scarlett, Col. Mustard, Mrs. White, Mr. Green, Mrs. Peacock, Prof. Plum
-    public boolean checkSusgestion(String suspect, String room, String weapon)
-    {
-        String suggestion[] = new String[]{suspect, room, weapon};
-
-        // this should loop starting with the player whose turn is after the player making the suggestion.
-        // currently loops through all players starting with the first player
-        for (Player player : _players)
-        {
-            for (Card card : player.getPlayerHand().getCards())
-            {
-                for (String cardName : suggestion)
-                {
-                    if (card.getCardName().equals(cardName))
-                    {
-                        handleMessage("Player " + player.getUserID() + " has a card in suggestion");
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     public void handleMessage(String msg)
