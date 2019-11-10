@@ -161,4 +161,5 @@ public class GameBoard{
 	}
 
 	//TODO method getAdjacentRooms
+	//TODO method isGuessableRoom(String location)
 }
