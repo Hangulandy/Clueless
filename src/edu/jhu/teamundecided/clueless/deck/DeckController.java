@@ -19,9 +19,6 @@ public class DeckController
     private ArrayList<String> _Weapons;
     private ArrayList<Card> _CaseFile;
 
-    // Players (temp?)
-    private ArrayList<Player> _players;
-
     public DeckController()
     {
         // create the card name lists - used to create the cards
@@ -47,7 +44,7 @@ public class DeckController
         _decks.add(_weaponDeck);
     }
 
-    public void combineDecks()
+    private void combineDecks()
     {
         ArrayList<Card> tempList = new ArrayList<>();
 
@@ -62,7 +59,7 @@ public class DeckController
         _FullDeck.shuffleCards();
     }
 
-    public void selectCaseFile()
+    private void selectCaseFile()
     {
         _CaseFile = new ArrayList<>();
 
@@ -74,7 +71,7 @@ public class DeckController
         }
     }
 
-    public void shuffleAllDecks()
+    private void shuffleAllDecks()
     {
         _decks.forEach(Deck::shuffleCards);
     }
@@ -102,7 +99,7 @@ public class DeckController
             }
 
             // loop playerId
-            if (playerId == _players.size())
+            if (playerId == players.size())
             {
                 playerId = 0;
             }
@@ -127,7 +124,19 @@ public class DeckController
         return true;
     }
 
-    public void handleMessage(String msg)
+    public Deck getSuggestionDeck()
+    {
+        Deck suggestionDeck = new Deck();
+
+        suggestionDeck.addCardsFromDeck(_suspectDeck);
+        suggestionDeck.addCardsFromDeck(_roomDeck);
+        suggestionDeck.addCardsFromDeck(_weaponDeck);
+
+        return suggestionDeck;
+    }
+
+
+    private void handleMessage(String msg)
     {
         System.out.println(msg);
         // future use for this method may be to pass message to a player or broadcast to all players

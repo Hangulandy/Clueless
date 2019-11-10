@@ -21,12 +21,17 @@ public class Deck
         _cards.addAll(card);
     }
 
-    public void shuffleCards()
+    Deck()
+    {
+        _cards = new ArrayList<>();
+    }
+
+    void shuffleCards()
     {
         Collections.shuffle(_cards);
     }
 
-    public ArrayList<Card> getCards()
+    ArrayList<Card> getCards()
     {
         return _cards;
     }
@@ -34,6 +39,11 @@ public class Deck
     public void setCards(ArrayList<Card> _cards)
     {
         this._cards = _cards;
+    }
+
+    void addCardsFromDeck(Deck deck)
+    {
+        this._cards.addAll(deck.getCards());
     }
 
     public Card getCard(String name)
@@ -48,7 +58,7 @@ public class Deck
         return null;
     }
 
-    public void removeCard(Card name)
+    void removeCard(Card name)
     {
         _cards.remove(name);
     }

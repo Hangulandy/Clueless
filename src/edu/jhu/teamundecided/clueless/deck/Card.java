@@ -5,7 +5,7 @@ public class Card
     private String _cardName;
     private CardType _type;
 
-    enum CardType
+    public enum CardType
     {
         Suspect,
         Room,
@@ -40,8 +40,7 @@ public class Card
 
     public String toString()
     {
-        String out = getCardName() + " - Card Type: " + getType();
-        return out;
+        return getCardName() + " - Card Type: " + getType();
     }
 
 }

@@ -1,5 +1,6 @@
 package edu.jhu.teamundecided.clueless.deck;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Suggestion
@@ -25,5 +26,10 @@ public class Suggestion
         }
 
         return null;
+    }
+
+    public ArrayList<Card> getSuggestedCards()
+    {
+        return _suggestionList;
     }
 }

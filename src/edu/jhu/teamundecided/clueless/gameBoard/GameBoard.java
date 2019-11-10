@@ -1,18 +1,15 @@
-package edu.jhu.teamundecided.clueless.gameBoard;//By: Trey Hoffman, thoffm10@jhu.edu
+//By: Trey Hoffman, thoffm10@jhu.edu
 //Description: This program draws out a minimal text based game board for "Clueless". 
 //Use the menu to move players around and see the game board update.  
+package edu.jhu.teamundecided.clueless.gameBoard;
 
 import java.util.*;
 
 
 public class GameBoard{
 
-	public GameBoard()
-	{
-	}
-
 	//dictionary to hold player locations
-	public static HashMap<String, String> playersMap = new HashMap<String, String>();
+	public static HashMap<String, String> playersMap = new HashMap<>();
 	
 	//array of arrays to hold the game locations
 	public static String[][] board = 

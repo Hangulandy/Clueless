@@ -1,4 +1,4 @@
-package edu.jhu.teamundecided.clueless.serverApp;/*
+/*
 The Server class is a Thread that accepts or rejects connection requests, assigns sockets, and starts ServerWorker
 Threads for each accepted connection. It also acts as the "go-between" between the GameController Instance and the
 ServerWorker Threads.
@@ -6,6 +6,7 @@ ServerWorker Threads.
 This implementation is borrowed from a tutorial at https://fullstackmastery.com/ep4 written by Jim Liao. It was
 adapted for use in this system by Andrew Johnson.
  */
+package edu.jhu.teamundecided.clueless.serverApp;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -123,27 +124,9 @@ public class Server extends Thread
       }
    }
 
-   public void requestGameStart()
+   public void requestGameStart() throws InterruptedException, IOException
    {
       _gc.startGame();
-   }
-
-
-   public void suggest(String[] tokens)
-   {
-      _gc.suggest(tokens[1], tokens[2], tokens[3]);
-   }
-
-
-   public void accuse(String[] tokens)
-   {
-      _gc.accuse(tokens[1], tokens[2], tokens[3]);
-   }
-
-
-   public void move(String[] tokens)
-   {
-      _gc.move(tokens[1]);
    }
 
 
