@@ -6,6 +6,7 @@ of the user's inputs. Offers options to user to Move, Guess, Deny, Accuse, etc.
 Class written by Kira Ullman, edited by Andrew Johnson
 */
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameController
@@ -31,8 +32,7 @@ public class GameController
    }
 
 
-   public void startGame()
-   {
+   public void startGame() throws IOException, InterruptedException {
 
       if (!_gameStarted)
       {
@@ -41,7 +41,7 @@ public class GameController
 
          for (ServerWorker worker : list)
          {
-            addPlayer(worker.getUserName());
+            addPlayer(worker);
          }
 
          _gameStarted = true;
@@ -54,17 +54,16 @@ public class GameController
       runGame();
    }
 
-   public void addPlayer(String userID)
+   public void addPlayer(ServerWorker worker)
    {
 
-      Player player = new Player(userID, this);
+      Player player = new Player(worker);
       System.out.println(player.toString());
       _players.add(player);
       _server.broadcast(player.toString());
    }
 
-   public void runGame()
-   {
+   public void runGame() throws IOException, InterruptedException {
       Player currentPlayer;
       while (!_gameOver)
       {
@@ -75,12 +74,10 @@ public class GameController
       }
    }
 
-   public void executeTurn(Player currentPlayer){
+   public void executeTurn(Player currentPlayer) throws IOException, InterruptedException {
       if(currentPlayer.getStatus()){
-         String currentLocation = currentPlayer.getLocation();
+         Room currentLocation = currentPlayer.getLocation();
          boolean canMove = true;
-         //TODO canMove = _gb.getAdjacentRooms()
-         //TODO tell player the adjacent Rooms so Player can broadcast to user
          if (canMove){
             String desiredLocation = currentPlayer.getMoveCommand();
             move(currentPlayer, desiredLocation);
@@ -88,8 +85,8 @@ public class GameController
 
          boolean canSuggest = true;
          //TODO canSuggest = _gb.isRoom(currentPlayer.getLocation());
-         //TODO Suggestion sug = currentPlayer.getSuggestionCommand();
-         suggest("", "", "");
+         Suggestion sug = currentPlayer.getSuggestionCommand();
+         suggest(sug);
          _gb.movePlayer("", "");
 
          /*Accusation acc = currentPlayer.getAccusationCommand();
@@ -115,31 +112,34 @@ public class GameController
    }
 
 
-   public void suggest(String suspect, String weapon, String room)
+   public void suggest(Suggestion sug)
    {
-
+      String suspect = Suggestion.get(0);
+      String weapon = Suggestion.get(1);
+      String rm = Suggestion.get(2);
       String msg =
               _players.get(turn).getCharacterName() + " has suggested that " + suspect + " did it with the " + weapon +
                       " in " +
-                      "the " + room + "!";
+                      "the " + rm + "!";
 
       System.out.println(msg);
       _server.broadcast(msg);
 
-      int marker = turn + 1; //start with the user who preceded the suggester
+      int marker = turn + 1; //start with the next user to begin disproving
       marker = marker % 6;
       String disprovingCard = null;
       while(marker != turn && disprovingCard == null){
-         //TODO broadcast "asking marker if they can disprove"
-         //TODO look into players' hands and check if they can disprove
-         disprovingCard = _players.get(marker).disproveSuggestion(suspect, weapon, room);
-         if (disprovingCard != null){
-            _server.broadcast("The suggestion has been disproven by " + _players.get(marker).getUserID());
-            _players.get(turn).receiveMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
+         _server.broadcast("Asking " + _players.get(marker).getUserID() + " if they can disprove suggestion.");
+         ArrayList<GameCard> disprovingOptions = checkPlayerHand(_players.get(marker), sug);
+         if (disprovingOptions.isEmpty() {
+            _server.broadcast(_players.get(marker).getUserID() + " cannot disprove suggestion");
          }
          else{
-            //TODO tell everyone marker passed
+            disprovingCard = _players.get(marker).disproveSuggestion(disprovingOptions);
+            _server.broadcast("The suggestion has been disproven by " + _players.get(marker).getUserID());
+            _players.get(turn).sendMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
          }
+
          marker = marker ++;
          marker = marker % 6;
       }
@@ -148,6 +148,21 @@ public class GameController
       }
    }
 
+   private ArrayList<GameCard> checkPlayerHand(Player player, Suggestion sug){
+      ArrayList<GameCard> options = new ArrayList<GameCard>();
+      Hand hand = player.getPlayerHand();
+      for (GameCard card : hand) {
+         int i = 0;
+         if(Suggestion.get(i).compareTo(card.toString())) {
+            options.add(card);
+         }
+         i++;
+      }
+      return options;
+   }
+
+
+   }
 
    public boolean accuse(String suspect, String weapon, String room)
    {
