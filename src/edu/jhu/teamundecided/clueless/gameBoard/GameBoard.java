@@ -1,33 +1,63 @@
-//By: Trey Hoffman, thoffm10@jhu.edu
+package edu.jhu.teamundecided.clueless.gameBoard;//By: Trey Hoffman, thoffm10@jhu.edu
 //Description: This program draws out a minimal text based game board for "Clueless". 
 //Use the menu to move players around and see the game board update.  
+
 import java.util.*;
 
+
 public class GameBoard{
+
+	public GameBoard()
+	{
+	}
 
 	//dictionary to hold player locations
 	public static HashMap<String, String> playersMap = new HashMap<String, String>();
 	
 	//array of arrays to hold the game locations
-	public static String[][] board = {
-		{"R01", "H01", "R02", "H02", "R03"},
-		{"H03", "T01", "H04", "T02", "H05"},
-		{"R04", "H06", "R05", "H07", "R06"},
-		{"H08", "T03", "H09", "T04", "H10"},
-		{"R07", "H11", "R08", "H12", "R09"}
-	};
+	public static String[][] board = 
+		{
+			{"   ", "R01", "H01", "R02", "H02", "R03", "   "},
+			{"S06", "H03", "T01", "H04", "T02", "H05", "S01"},
+			{"   ", "R04", "H06", "R05", "H07", "R06", "   "},
+			{"S05", "H08", "T03", "H09", "T04", "H10", "S02"},
+			{"   ", "R07", "H11", "R08", "H12", "R09", "   "},
+			{"   ", "   ", "S04", "   ", "S03", "   ", "   "}
+		};
 
+		// Labeled game board, formatting is not complete
+		// {
+		// 	{"       ", "Kitchen     ", "Hallway 1     ", "Ballroom   ", "Hallway 2     ", "Study     ", "       "},
+		// 	{"Start 6", "Hallway 3   ", "Secret Passage", "Hallway 4  ", "Secret Passage", "Hallway 5 ", "Start 1"},
+		// 	{"       ", "Conservatory", "Hallway 6	   ", "Dining room", "Hallway 7     ", "Billiard  ", "       "},
+		// 	{"Start 5", "Hallway 8   ", "Secret Passage", "Hallway 9  ", "Secret Passage", "Hallway 10", "Start 2"},
+		// 	{"       ", "Lounge      ", "Hallway 11    ", "Hall       ", "Hallway 12    ", "Library   ", "       "},
+		// 	{"       ", "            ", "Start 4       ", "           ", "Start 3       ", "          ", "       "}
+		// };
 
-	static void drawBoard(String[][] board, HashMap<String, String> playersMap, String previousMove){
+	static void drawBoard(String[][] board, HashMap<String, String> playersMap, String previousMove) {
+		//Print out the banner
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println("###################################################################################");
+		System.out.println("################################ Clueless Game Board ##############################");
+		System.out.println("###################################################################################");
+		System.out.println("Board Key:");
+		System.out.println("R: Room");
+		System.out.println("S: Starting Position");
+		System.out.println("H: Hallway");
+		System.out.println("T: Secret Tunnel");	
 
 		//no previous move for the first run. 
 		if(previousMove != ""){
-			System.out.println("Previous Move: " + previousMove);
+			System.out.println("\n                    Previous Move: " + previousMove);
 		}
 		
+		System.out.println("###################################################################################");
+		System.out.println("___________________________________________________________________________________\n");
+
 		//iterate over board to print
-		for(int i = 0; i <= 4; i++){
-			for(int j = 0; j <= 4; j++){
+		for(int i = 0; i <= 5; i++){
+			for(int j = 0; j <= 6; j++){
 				if(board[i][j] == "   "){
 					System.out.print("            ");
 				}
@@ -39,7 +69,7 @@ public class GameBoard{
 			System.out.print("\n");
 
 			//print out the players if they are present in any of this row's locations
-			for(int j = 0; j <= 4; j++){
+			for(int j = 0; j <= 6; j++){
 				String location = String.valueOf(i)+','+String.valueOf(j);
 				
 				if(playersMap.containsValue(location)){
@@ -61,16 +91,16 @@ public class GameBoard{
 					System.out.print("            ");
 				}
 			}
-			System.out.println("\n\n___________________________________________________\n");
+			System.out.println("\n\n\n___________________________________________________________________________________\n");
 		}
 	}
 
-	static void movePlayer(String player, String position){
+	public static void movePlayer(String player, String position){
 		position = position.trim();
 
 		//convert the position string to a string showing index location
-		for(int i = 0; i <= 4; i++){
-			for(int j = 0; j <= 4; j++){
+		for(int i = 0; i <= 5; i++){
+			for(int j = 0; j <= 6; j++){
 				if(board[i][j].trim().equals(position)){
 					position = String.valueOf(i) + "," + String.valueOf(j);
 					break;
@@ -101,10 +131,10 @@ public class GameBoard{
 	static void initGame(){
 
 		//initialize the game board, placing all players in their respective locations
-		playersMap.put("1", "0,3");
-		playersMap.put("2", "1,4");
-		playersMap.put("3", "4,3");
-		playersMap.put("4", "4,1");
+		playersMap.put("1", "1,6");
+		playersMap.put("2", "3,6");
+		playersMap.put("3", "5,4");
+		playersMap.put("4", "5,2");
 		playersMap.put("5", "3,0");
 		playersMap.put("6", "1,0");
 
@@ -132,7 +162,12 @@ public class GameBoard{
 			
 		do{
 			//option menu for moving or quitting the program
-			System.out.print("m: move a player\nq: quit\nselect an option:");
+			System.out.println("###################################################################################");
+			System.out.println("######################################## Menu #####################################");
+			System.out.println("###################################################################################");
+			System.out.println("m: move a player");
+			System.out.println("q: quit");
+			System.out.print("Select an option: ");
 
 			//get console input 
 			Scanner scan = new Scanner(System.in);	
@@ -161,5 +196,4 @@ public class GameBoard{
 	}
 
 	//TODO method getAdjacentRooms
-	//TODO method isGuessableRoom(String location)
 }
