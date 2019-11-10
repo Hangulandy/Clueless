@@ -85,22 +85,6 @@ public class Player
       return _characterName + " being played by " + _userName;
    }
 
-   public boolean executeTurn(ArrayList<Card> deck) throws InterruptedException
-   {
-
-      try
-      {
-//         getMoveCommand();
-         // getSuggestionCommand(deck);
-          getAccusationCommand(deck);
-      } catch (IOException e)
-      {
-         e.printStackTrace();
-      }
-
-      return true;
-   }
-
 
    public String getMoveCommand() throws IOException
    {
