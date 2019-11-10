@@ -69,23 +69,48 @@ public class GameController
       while (!_gameOver)
       {
          currentPlayer = _players.get(turn);
-         currentPlayer.executeTurn();
+         executeTurn(currentPlayer);
          turn++;
          turn = turn % 6;
       }
    }
 
+   public void executeTurn(Player currentPlayer){
+      if(currentPlayer.getStatus()){
+         String currentLocation = currentPlayer.getLocation();
+         boolean canMove = true;
+         //TODO canMove = _gb.getAdjacentRooms()
+         //TODO tell player the adjacent Rooms so Player can broadcast to user
+         if (canMove){
+            String desiredLocation = currentPlayer.getMoveCommand();
+            move(currentPlayer, desiredLocation);
+         }
 
-   public void move(String room)
+         boolean canSuggest = true;
+         //TODO canSuggest = _gb.isRoom(currentPlayer.getLocation());
+         //TODO Suggestion sug = currentPlayer.getSuggestionCommand();
+         suggest("", "", "");
+         _gb.movePlayer("", "");
+
+         /*Accusation acc = currentPlayer.getAccusationCommand();
+         if (acc != null){
+            accuse(acc);
+          */
+      }
+   }
+
+
+   public void move(Player player, String room)
    {
-      boolean success = _gb.movePlayer(_players.get(turn).getCharacterName(), room);
+      boolean success = _gb.movePlayer(player.getCharacterName(), room);
 
       if (success)
       {
-         _server.broadcast(_players.get(turn).getCharacterName() + " moves to the " + room);
+         _server.broadcast(player.getCharacterName() + " moves to the " + room);
+         player.setLocation(room);
       } else
       {
-         _server.broadcast(_players.get(turn).getCharacterName() + " invalid move");
+         _server.broadcast(player.getCharacterName() + " invalid move");
       }
    }
 
