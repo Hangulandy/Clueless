@@ -1,10 +1,11 @@
 /*
 The Game Flow subsystem will act as the messenger between the user interface and the other subsystems, the
-abstraction of the whole system. Tracks which Player has a turn, queries other subsystems as to the viability
+abstraction of the whole system. Tracks which Player has a _turn, queries other subsystems as to the viability
 of the user's inputs. Offers options to user to Move, Guess, Deny, Accuse, etc.
 
 Class written by Kira Ullman, edited by Andrew Johnson
 */
+
 package edu.jhu.teamundecided.clueless.serverApp;
 
 import edu.jhu.teamundecided.clueless.deck.Card;
@@ -13,6 +14,7 @@ import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
 import edu.jhu.teamundecided.clueless.gameBoard.Room;
 import edu.jhu.teamundecided.clueless.player.Player;
+import javafx.application.Platform;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,22 +28,24 @@ public class GameController
    private GameBoard _gb;
    DeckController _deckController;
    private int numberOfPlayers;
-   private int turn;
+   private int _turn;
    private boolean _gameOver;
 
 
    public GameController(Server server)
    {
+
       _server = server;
       _players = new ArrayList<Player>();
       _gb = new GameBoard();
       _deckController = new DeckController();
-      turn = 0;
+      _turn = 0;
       _gameStarted = false;
    }
 
 
-   public void startGame() throws IOException, InterruptedException {
+   public void startGame() throws IOException, InterruptedException
+   {
 
       if (!_gameStarted)
       {
@@ -60,9 +64,10 @@ public class GameController
       }
       _deckController.dealCards(_players);
       numberOfPlayers = _players.size();
-      turn = getFirstTurn();
+      _turn = getFirstTurn();
       runGame();
    }
+
 
    public void addPlayer(ServerWorker worker)
    {
@@ -73,24 +78,67 @@ public class GameController
       _server.broadcastTextMessage(player.toString());
    }
 
+
    public ArrayList<Player> getPlayers()
    {
+
       return _players;
    }
 
-   public void runGame() throws IOException, InterruptedException {
+
+   public void runGame() throws IOException, InterruptedException
+   {
+
       Player currentPlayer;
+
+      placePlayers();
+
       while (!_gameOver)
       {
-         currentPlayer = _players.get(turn);
+         currentPlayer = _players.get(_turn);
          executeTurn(currentPlayer);
-         turn++;
-         turn = turn % numberOfPlayers;
+         _turn++;
+         _turn = _turn % numberOfPlayers;
       }
    }
 
-   public void executeTurn(Player currentPlayer) throws IOException, InterruptedException {
-      if(currentPlayer.getStatus()){
+
+   private void placePlayers()
+   {
+
+      for (Player player : _players)
+      {
+         switch (player.getCharacterName())
+         {
+            case "Ms._Scarlett":
+               _gb.movePlayer(player, "hallway_2");
+               break;
+            case "Col._Mustard":
+               _gb.movePlayer(player, "hallway_5");
+               break;
+            case "Mrs._White":
+               _gb.movePlayer(player, "hallway_12");
+               break;
+            case "Mrs._Peacock":
+               _gb.movePlayer(player, "hallway_11");
+               break;
+            case "Prof._Plum":
+               _gb.movePlayer(player, "hallway_8");
+               break;
+            case "Mr._Green":
+               _gb.movePlayer(player, "hallway_3");
+               break;
+         }
+      }
+
+   }
+
+
+   public void executeTurn(Player currentPlayer) throws IOException, InterruptedException
+   {
+
+      if (currentPlayer.getStatus())
+      {
          Room currentLocation = currentPlayer.getLocation();
          // You can uncomment this if you want to make sure the program is successfully looping through here
          // _server.broadcastTextMessage(currentPlayer.getCharacterName() + " is currently in the " + currentLocation.getRoomName());
@@ -134,53 +182,57 @@ public class GameController
 
    public void suggest(Suggestion sug) throws IOException
    {
+
       String suspect = sug.getCard(Card.CardType.Suspect).getCardName();
       String weapon = sug.getCard(Card.CardType.Weapon).getCardName();
       String rm = sug.getCard(Card.CardType.Room).getCardName();
       String msg =
-              _players.get(turn).getCharacterName() + " has suggested that " + suspect + " did it with the " + weapon +
+              _players.get(_turn).getCharacterName() + " has suggested that " + suspect + " did it with the " + weapon +
                       " in " +
                       "the " + rm + "!";
 
       System.out.println(msg);
       _server.broadcastTextMessage(msg);
 
-      int marker = turn + 1; //start with the next user to begin disproving
+      int marker = _turn + 1; //start with the next user to begin disproving
       marker = marker % numberOfPlayers;
       String disprovingCard = null;
-      while(marker != turn && disprovingCard == null)
+      while (marker != _turn && disprovingCard == null)
       {
-         _server.broadcastTextMessage("Asking " + _players.get(marker).getUserID() + " if they can disprove suggestion.");
+         _server.broadcastTextMessage(
+                 "Asking " + _players.get(marker).getUserID() + " if they can disprove suggestion.");
          ArrayList<Card> disprovingOptions = checkPlayerHand(_players.get(marker), sug);
          if (disprovingOptions.isEmpty())
          {
             _server.broadcastTextMessage(_players.get(marker).getUserID() + " cannot disprove suggestion");
-         }
-         else
+         } else
          {
             //TODO this code needs to be refactored
 //            disprovingCard = _players.get(marker).disproveSuggestion(disprovingOptions);
 //            _server.broadcastTextMessage("The suggestion has been disproven by " + _players.get(marker).getUserID());
-//            _players.get(turn).sendMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
+//            _players.get(_turn).sendMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
          }
 
-         marker ++;
+         marker++;
          marker %= numberOfPlayers;
       }
-      if(disprovingCard == null){
+      if (disprovingCard == null)
+      {
          _server.broadcastTextMessage("Nobody disproved the suggestion");
       }
    }
 
+
    private ArrayList<Card> checkPlayerHand(Player player, Suggestion sug)
    {
+
       ArrayList<Card> options = new ArrayList<>();
 
       for (Card card : player.getPlayerHand().getCards())
       {
-         for(Card sugCard : sug.getSuggestedCards())
+         for (Card sugCard : sug.getSuggestedCards())
          {
-            if(card.getCardName().equals(sugCard.getCardName()))
+            if (card.getCardName().equals(sugCard.getCardName()))
             {
                options.add(card);
             }
@@ -190,11 +242,12 @@ public class GameController
       return options;
    }
 
+
    public boolean accuse(String suspect, String weapon, String room)
    {
 
       String msg =
-              _players.get(turn).getCharacterName() + " has accused " + suspect + " of killing Mr. Black with the " +
+              _players.get(_turn).getCharacterName() + " has accused " + suspect + " of killing Mr. Black with the " +
                       weapon +
                       " in the " + room + "!";
 
@@ -205,36 +258,48 @@ public class GameController
 
       if (accusationCorrect)
       {
-         msg = _players.get(turn).getCharacterName() + " is RIGHT!";
+         msg = _players.get(_turn).getCharacterName() + " is RIGHT!";
          _gameOver = true;
       } else
       {
-         msg = _players.get(turn).getCharacterName() + " is WRONG!";
-         _players.get(turn).setStatus(false);
+         msg = _players.get(_turn).getCharacterName() + " is WRONG!";
+         _players.get(_turn).setStatus(false);
       }
 
       _server.broadcastTextMessage(msg);
       return accusationCorrect;
    }
 
-   public String getPlayerLocation(Player player){
+
+   public String getPlayerLocation(Player player)
+   {
+
       return _deckController.getLocation(player);
    }
 
-   public boolean canMakeSuggestion(Player player){
-      String location =_deckController.getLocation(player);
+
+   public boolean canMakeSuggestion(Player player)
+   {
+
+      String location = _deckController.getLocation(player);
       return _deckController.isRoom(location);
    }
 
-   private int getFirstTurn(){
+
+   private int getFirstTurn()
+   {
+
       int index = 0;
-      for (Player player: _players) {
+      for (Player player : _players)
+      {
          String name = player.getCharacterName();
-         if (name == "Miss Scarlett"){
+         if (name == "Miss Scarlett")
+         {
             index = _players.indexOf(player);
          }
       }
       return index;
    }
+
 
 }

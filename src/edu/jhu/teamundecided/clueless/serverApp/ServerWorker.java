@@ -19,7 +19,7 @@ public class ServerWorker extends Thread
    private final Server _server;
    private String _userName = null;
    private OutputStream _outputStream;
-   private BufferedReader reader;
+   private BufferedReader _reader;
 
    /*
    The default constructor should be called by the Server. It will set this server to the calling server. It will set
@@ -63,9 +63,9 @@ public class ServerWorker extends Thread
       InputStream inputStream = _clientSocket.getInputStream();
       this._outputStream = _clientSocket.getOutputStream();
 
-      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+      _reader = new BufferedReader(new InputStreamReader(inputStream));
       String line;
-      while ((line = reader.readLine()) != null)
+      while ((line = _reader.readLine()) != null)
       {
          System.out.println(line);
          String[] tokens = line.split(" ");
@@ -289,7 +289,7 @@ public class ServerWorker extends Thread
    public BufferedReader getReader()
    {
 
-      return reader;
+      return _reader;
    }
 
    // TODO confirm that we have all the correct types of messages to send from system to clients

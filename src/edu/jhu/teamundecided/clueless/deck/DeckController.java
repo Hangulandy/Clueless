@@ -22,9 +22,11 @@ public class DeckController
     public DeckController()
     {
         // create the card name lists - used to create the cards
-        _Suspects = new ArrayList<>(Arrays.asList("Mr. Green", "Colonel Mustard", "Mrs. Peacock", "Professor Plum", "Miss Scarlett", "Mrs. White"));
-        _Rooms = new ArrayList<>(Arrays.asList("Ballroom", "Kitchen", "Dining Room", "Lounge", "Hall", "Study", "Library", "Conservatory", "Billiard Room"));
-        _Weapons = new ArrayList<>(Arrays.asList("Candle Stick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Wrench"));
+        _Suspects = new ArrayList<>(Arrays.asList("Mr._Green", "Col._Mustard", "Mrs._Peacock", "Prof._Plum",
+                "Ms._Scarlett", "Mrs._White"));
+        _Rooms = new ArrayList<>(Arrays.asList("Ballroom", "Kitchen", "Dining_Room", "Lounge", "Hall", "Study",
+                "Library", "Conservatory", "Billiard_Room"));
+        _Weapons = new ArrayList<>(Arrays.asList("Candle_Stick", "Dagger", "Lead_Pipe", "Revolver", "Rope", "Wrench"));
 
         setupDecks();
         shuffleAllDecks();
