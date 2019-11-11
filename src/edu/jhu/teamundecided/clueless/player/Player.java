@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public class Player
 {
-
    private final int _playerNum;
    private static int numPlayers = 0; // class variable, not instance variable
    private String _characterName = "";
@@ -20,7 +19,6 @@ public class Player
    private ServerWorker _serverWorker;
    private boolean _isActive;
    private Hand _playerHand;
-
 
    public Player()
    {

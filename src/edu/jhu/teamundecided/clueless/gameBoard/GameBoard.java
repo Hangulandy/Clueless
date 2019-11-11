@@ -1,7 +1,6 @@
 package edu.jhu.teamundecided.clueless.gameBoard;
 
 import edu.jhu.teamundecided.clueless.player.Player;
-import edu.jhu.teamundecided.clueless.serverApp.GameController;
 
 import java.util.*;
 
