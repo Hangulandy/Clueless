@@ -249,7 +249,7 @@ public class CluelessClient
          String line;
          while ((line = _bufferedIn.readLine()) != null)
          {
-            System.out.println("Received message : " + line);
+            // System.out.println("Received message : " + line);
             String[] tokens = line.split(" ");
             if (tokens != null && tokens.length > 0)
             {
