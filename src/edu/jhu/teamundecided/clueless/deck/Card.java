@@ -12,7 +12,7 @@ public class Card
         Weapon
     }
 
-    Card(String name, CardType type)
+    public Card(String name, CardType type)
     {
         _cardName = name;
         _type = type;

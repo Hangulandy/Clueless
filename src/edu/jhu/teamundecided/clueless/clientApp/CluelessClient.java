@@ -1,5 +1,8 @@
 package edu.jhu.teamundecided.clueless.clientApp;
 
+import edu.jhu.teamundecided.clueless.deck.Card;
+import edu.jhu.teamundecided.clueless.player.Hand;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ public class CluelessClient
    private BufferedReader _bufferedIn;
    private String _userName;
    private boolean keepAsking;
+   private Hand hand;
 
    private Scanner _scanner = new Scanner(System.in);
 
@@ -29,6 +33,7 @@ public class CluelessClient
       this._serverName = serverName;
       this._serverPort = serverPort;
       this.keepAsking = true;
+      hand = new Hand();
    }
 
 
@@ -280,6 +285,9 @@ public class CluelessClient
                } else if ("askAccuse".equalsIgnoreCase(cmd))
                {
                   handleAskAccuse(tokens);
+               } else if ("sendHand".equalsIgnoreCase(cmd))
+               {
+                  handleSendHand(tokens);
                }
             }
          }
@@ -294,6 +302,36 @@ public class CluelessClient
             e.printStackTrace();
          }
       }
+   }
+
+
+   private void handleSendHand(String[] tokens)
+   {
+      String cardName = "";
+      String cardType = "";
+
+      for (int i = 1; i < tokens.length; i++)
+      {
+         if (i % 2 == 1)
+         {
+            cardName = tokens[i];
+         } else {
+            cardType = tokens[i];
+            switch (cardType)
+            {
+               case "Suspect":
+                  hand.addCard(new Card(cardName, Card.CardType.Suspect));
+                  break;
+               case "Weapon":
+                  hand.addCard(new Card(cardName, Card.CardType.Weapon));
+                  break;
+               case "Room":
+                  hand.addCard(new Card(cardName, Card.CardType.Room));
+                  break;
+            }
+         }
+      }
+
    }
 
 
@@ -367,7 +405,13 @@ public class CluelessClient
    private void displayCards()
    {
 
-      System.out.println("Method currently under construction....");
+      System.out.println("You have the following cards:");
+      for (Card card : hand.getCards())
+      {
+         System.out.println(card.toString());
+      }
+
+      System.out.println();
    }
 
 
@@ -517,9 +561,6 @@ public class CluelessClient
    // TODO Add handleUpdateGameBoard in read loop
    // TODO Add renderGameBoard method
    // TODO Add ArrayList<Player> players in class instance variables?
-   // TODO Add Hand hand in instance class variables
-   // TODO Add handleReceiveHand in read loop
-   // TODO Add renderHand method
    // TODO Add renderGameBoard and renderHand as options for the reusable menu
 
 

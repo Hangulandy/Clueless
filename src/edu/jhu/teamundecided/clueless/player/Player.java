@@ -1,6 +1,7 @@
 package edu.jhu.teamundecided.clueless.player;
 
 import edu.jhu.teamundecided.clueless.deck.Card;
+import edu.jhu.teamundecided.clueless.deck.Deck;
 import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.Room;
 import edu.jhu.teamundecided.clueless.serverApp.ServerWorker;
@@ -130,15 +131,15 @@ public class Player
    Prompts the user to suggest a suspect, awaits response, suggest a weapon, awaits response, and then finally
    creates and returns a Suggestion object with the cardNames for those two and the current room
     */
-   public Suggestion getSuggestionCommand(ArrayList<Card> deck) throws IOException
+   public Suggestion getSuggestionCommand(Deck deck) throws IOException
    {
 
       _serverWorker.send("It is time to make a suggestion...");
 
-      sendSuggest(deck, Card.CardType.Suspect);
+      sendSuggestPrompt(deck, Card.CardType.Suspect);
       String suspect = getResponse()[1];
 
-      sendSuggest(deck, Card.CardType.Weapon);
+      sendSuggestPrompt(deck, Card.CardType.Weapon);
       String weapon = getResponse()[1];
 
       return new Suggestion(suspect, weapon, _currentLocation.getRoomName());
@@ -148,14 +149,14 @@ public class Player
    /*
    Sends the prompt command to get user suggestion based on the card type being asked.
     */
-   private void sendSuggest(ArrayList<Card> deck, Card.CardType cardType) throws IOException
+   private void sendSuggestPrompt(Deck deck, Card.CardType cardType) throws IOException
    {
 
       StringBuilder msg = new StringBuilder();
 
       msg.append(cardType);
 
-      for (Card card : deck)
+      for (Card card : deck.getCards())
       {
          if (card.getType() == cardType)
          {
@@ -173,7 +174,7 @@ public class Player
    suggestion for suspect, weapon, and room and await responses (in turn). Then create and return a Suggestion object
     with the cardNames for those three chosen cards.
     */
-   public Suggestion getAccusationCommand(ArrayList<Card> deck) throws IOException, InterruptedException
+   public Suggestion getAccusationCommand(Deck deck) throws IOException, InterruptedException
    {
 
       askIfWantAccuse();
@@ -183,13 +184,13 @@ public class Player
       {
          _serverWorker.sendTextMessage("It is time to make an accusation...");
 
-         sendSuggest(deck, Card.CardType.Suspect);
+         sendSuggestPrompt(deck, Card.CardType.Suspect);
          String suspect = getResponse()[1];
 
-         sendSuggest(deck, Card.CardType.Weapon);
+         sendSuggestPrompt(deck, Card.CardType.Weapon);
          String weapon = getResponse()[1];
 
-         sendSuggest(deck, Card.CardType.Room);
+         sendSuggestPrompt(deck, Card.CardType.Room);
          String room = getResponse()[1];
 
          return new Suggestion(suspect, weapon, room);
@@ -233,6 +234,25 @@ public class Player
       String response = getResponse()[1];
 
       return response;
+   }
+
+   public void sendHandToClient() throws IOException
+   {
+
+      StringBuilder msg = new StringBuilder();
+
+      msg.append("sendHand");
+
+      for (Card card : _playerHand.getCards())
+      {
+         msg.append(" ");
+         msg.append(card.getCardName());
+         msg.append(" ");
+         msg.append(card.getType());
+      }
+
+      _serverWorker.send(msg.toString());
+
    }
 
 

@@ -31,7 +31,7 @@ public class Deck
         Collections.shuffle(_cards);
     }
 
-    ArrayList<Card> getCards()
+    public ArrayList<Card> getCards()
     {
         return _cards;
     }
