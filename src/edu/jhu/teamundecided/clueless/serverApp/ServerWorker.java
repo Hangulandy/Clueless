@@ -9,6 +9,7 @@ package edu.jhu.teamundecided.clueless.serverApp;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServerWorker extends Thread
@@ -118,12 +119,19 @@ public class ServerWorker extends Thread
    /*
    The handleBroadcast method passes a broadcast request, including the message body, to the server.
     */
-   private void handleBroadcast(String[] tokens)
+   private void handleBroadcast(String[] tokens) throws IOException
    {
 
       String body = concatenateTokens(tokens, 1, tokens.length - 1);
 
-      _server.broadcast(body);
+      String outMsg = "msg " + _userName + body;
+
+      ArrayList<ServerWorker> workers = _server.getWorkerList();
+
+      for (ServerWorker worker : workers)
+      {
+         worker.send(outMsg);
+      }
    }
 
 
@@ -179,7 +187,7 @@ public class ServerWorker extends Thread
       List<ServerWorker> workerList = _server.getWorkerList();
 
       // send other online users current user's status
-      String onlineMsg = "offline " + _userName + "\n";
+      String onlineMsg = "offline " + _userName;
       for (ServerWorker worker : workerList)
       {
          if (!_userName.equals(worker.getUserName()))
@@ -229,14 +237,14 @@ public class ServerWorker extends Thread
             {
                if (!userName.equals(worker.getUserName()))
                {
-                  String msg2 = "online " + worker.getUserName() + "\n";
+                  String msg2 = "online " + worker.getUserName();
                   send(msg2);
                }
             }
          }
 
          // send other online users current user's status
-         String onlineMsg = "online " + userName + "\n";
+         String onlineMsg = "online " + userName;
          for (ServerWorker worker : workerList)
          {
             if (!userName.equals(worker.getUserName()))
@@ -256,14 +264,15 @@ public class ServerWorker extends Thread
 
       if (_userName != null)
       {
-         StringBuilder finalMessage = new StringBuilder(outMsg);
+         StringBuilder finalMessage = new StringBuilder(outMsg.trim());
          finalMessage.append("\n");
          _outputStream.write(outMsg.getBytes());
-         System.out.println("Message sent : " + outMsg);
+         System.out.println("Message sent to " + _userName + " : " + outMsg);
       }
    }
 
 
+   // TODO should this be changed?
    public void sendTextMessage(String msg) throws IOException
    {
 
@@ -277,18 +286,13 @@ public class ServerWorker extends Thread
    }
 
 
-   public Socket get_clientSocket()
-   {
-
-      return _clientSocket;
-   }
-
-
    public BufferedReader getReader()
    {
 
       return reader;
    }
+
+   // TODO confirm that we have all the correct types of messages to send from system to clients
 
 
 }

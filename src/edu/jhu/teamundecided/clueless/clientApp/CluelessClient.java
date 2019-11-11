@@ -467,7 +467,7 @@ public class CluelessClient
    public void broadcastMsg()
    {
 
-      System.out.println("Please enter the message to broadcast:");
+      System.out.println("Please enter the message to broadcast :");
       String msg = _scanner.nextLine();
 
       String cmd = "broadcast " + msg + "\n";
@@ -480,6 +480,15 @@ public class CluelessClient
       }
 
    }
+
+   // TODO Add GameBoard gameBoard in class instance variables
+   // TODO Add handleUpdateGameBoard in read loop
+   // TODO Add renderGameBoard method
+   // TODO Add ArrayList<Player> players in class instance variables?
+   // TODO Add Hand hand in instance class variables
+   // TODO Add handleReceiveHand in read loop
+   // TODO Add renderHand method
+   // TODO Add renderGameBoard and renderHand as options for the reusable menu
 
 
 }

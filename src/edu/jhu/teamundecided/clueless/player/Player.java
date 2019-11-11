@@ -72,7 +72,7 @@ public class Player
 
       // TODO must have getPossibleMoves method in Room
 
-      ArrayList<Room> possibleMoves = _currentLocation.getAdjcentRooms();
+      ArrayList<Room> possibleMoves = _currentLocation.getAdjacentRooms();
 
       if (possibleMoves.size() == 0)
       {

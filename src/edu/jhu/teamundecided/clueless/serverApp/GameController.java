@@ -12,7 +12,6 @@ import edu.jhu.teamundecided.clueless.deck.DeckController;
 import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
 import edu.jhu.teamundecided.clueless.gameBoard.Room;
-import edu.jhu.teamundecided.clueless.player.Hand;
 import edu.jhu.teamundecided.clueless.player.Player;
 
 import java.io.IOException;
@@ -57,7 +56,7 @@ public class GameController
          _gameStarted = true;
       } else
       {
-         _server.broadcast("Game has already been started...");
+         _server.broadcastTextMessage("Game has already been started...");
       }
       _deckController.dealCards(_players);
       numberOfPlayers = _players.size();
@@ -71,7 +70,7 @@ public class GameController
       Player player = new Player(worker);
       System.out.println(player.toString());
       _players.add(player);
-      _server.broadcast(player.toString());
+      _server.broadcastTextMessage(player.toString());
    }
 
    public void runGame() throws IOException, InterruptedException {
@@ -89,7 +88,7 @@ public class GameController
       if(currentPlayer.getStatus()){
          Room currentLocation = currentPlayer.getLocation();
          // You can uncomment this if you want to make sure the program is successfully looping through here
-         // _server.broadcast(currentPlayer.getCharacterName() + " is currently in the " + currentLocation.getRoomName());
+         // _server.broadcastTextMessage(currentPlayer.getCharacterName() + " is currently in the " + currentLocation.getRoomName());
          boolean canMove = true;
 //         if (canMove){
 //            String desiredLocation = currentPlayer.getMoveCommand();
@@ -119,11 +118,11 @@ public class GameController
 //
 //      if (success)
 //      {
-//         _server.broadcast(player.getCharacterName() + " moves to the " + room);
+//         _server.broadcastTextMessage(player.getCharacterName() + " moves to the " + room);
 //         player.setLocation(room);
 //      } else
 //      {
-//         _server.broadcast(player.getCharacterName() + " invalid move");
+//         _server.broadcastTextMessage(player.getCharacterName() + " invalid move");
 //      }
    }
 
@@ -139,24 +138,24 @@ public class GameController
                       "the " + rm + "!";
 
       System.out.println(msg);
-      _server.broadcast(msg);
+      _server.broadcastTextMessage(msg);
 
       int marker = turn + 1; //start with the next user to begin disproving
       marker = marker % numberOfPlayers;
       String disprovingCard = null;
       while(marker != turn && disprovingCard == null)
       {
-         _server.broadcast("Asking " + _players.get(marker).getUserID() + " if they can disprove suggestion.");
+         _server.broadcastTextMessage("Asking " + _players.get(marker).getUserID() + " if they can disprove suggestion.");
          ArrayList<Card> disprovingOptions = checkPlayerHand(_players.get(marker), sug);
          if (disprovingOptions.isEmpty())
          {
-            _server.broadcast(_players.get(marker).getUserID() + " cannot disprove suggestion");
+            _server.broadcastTextMessage(_players.get(marker).getUserID() + " cannot disprove suggestion");
          }
          else
          {
             //TODO this code needs to be refactored
 //            disprovingCard = _players.get(marker).disproveSuggestion(disprovingOptions);
-//            _server.broadcast("The suggestion has been disproven by " + _players.get(marker).getUserID());
+//            _server.broadcastTextMessage("The suggestion has been disproven by " + _players.get(marker).getUserID());
 //            _players.get(turn).sendMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
          }
 
@@ -164,7 +163,7 @@ public class GameController
          marker %= numberOfPlayers;
       }
       if(disprovingCard == null){
-         _server.broadcast("Nobody disproved the suggestion");
+         _server.broadcastTextMessage("Nobody disproved the suggestion");
       }
    }
 
@@ -195,7 +194,7 @@ public class GameController
                       " in the " + room + "!";
 
       System.out.println(msg);
-      _server.broadcast(msg);
+      _server.broadcastTextMessage(msg);
 
       boolean accusationCorrect = _deckController.checkAccusation(new Suggestion(suspect, weapon, room));
 
@@ -209,7 +208,7 @@ public class GameController
          _players.get(turn).setStatus(false);
       }
 
-      _server.broadcast(msg);
+      _server.broadcastTextMessage(msg);
       return accusationCorrect;
    }
 

@@ -1,4 +1,6 @@
-// package edu.jhu.teamundecided.clueless.gameBoard;
+package edu.jhu.teamundecided.clueless.gameBoard;
+
+import edu.jhu.teamundecided.clueless.player.Player;
 
 import java.util.*;
 

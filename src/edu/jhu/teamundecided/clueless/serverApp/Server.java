@@ -83,7 +83,7 @@ public class Server extends Thread
    }
 
 
-   public void broadcast(String msg)
+   public void broadcastTextMessage(String msg)
    {
 
       StringBuilder msgToSend = new StringBuilder();
@@ -91,7 +91,6 @@ public class Server extends Thread
       msgToSend.append("msg ");
       msgToSend.append("system ");
       msgToSend.append(msg);
-      msgToSend.append("\n");
 
       for (ServerWorker worker : _workerList)
       {
@@ -106,23 +105,23 @@ public class Server extends Thread
    }
 
 
-   public void relayMsg(String userName, String msgToSend)
+   /*
+   Will be used for things such as broadcasting the current GameBoard configuration after a move
+    */
+   public void broadcastCommand(String msg)
    {
-
       for (ServerWorker worker : _workerList)
       {
-         if (worker.getUserName().equalsIgnoreCase(userName))
+         try
          {
-            try
-            {
-               worker.send(msgToSend);
-            } catch (IOException e)
-            {
-               e.printStackTrace();
-            }
+            worker.send(msg);
+         } catch (IOException e)
+         {
+            e.printStackTrace();
          }
       }
    }
+
 
    public void requestGameStart() throws InterruptedException, IOException
    {
