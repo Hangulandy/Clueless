@@ -301,7 +301,20 @@ public class CluelessClient
    private void handleMultipleChoicePrompt(String[] tokens)
    {
 
-      int choice = generateMenu(tokens);
+      int choice = 0;
+
+      do
+      {
+         choice = generateMenu(tokens);
+
+         if (choice == tokens.length)
+         {
+            renderGameBoard();
+         } else if (choice == tokens.length + 1)
+         {
+            displayCards();
+         }
+      } while (choice < 1 || choice >= tokens.length);
 
       sendReply(tokens[0], tokens[choice]);
 
@@ -313,14 +326,20 @@ public class CluelessClient
 
       System.out.println("\nPlease select a choice below for the " + tokens[0] + ":");
 
-      for (int i = 1; i < tokens.length; i++)
+      int i = 0;
+
+      while (i < tokens.length)
       {
+         i++;
          System.out.println(i + " " + tokens[i]);
       }
 
+      System.out.println(++i + " " + "Show the game board");
+      System.out.println(++i + " " + "View your cards");
+
       System.out.println();
 
-      return askUserForN(1, tokens.length);
+      return askUserForN(1, i);
    }
 
 
@@ -337,6 +356,20 @@ public class CluelessClient
       }
    }
 
+
+   private void renderGameBoard()
+   {
+
+      System.out.println("Method currently under construction...");
+
+   }
+
+
+   private void displayCards()
+   {
+
+      System.out.println("Method currently under construction....");
+   }
 
 
    private void handleAskAccuse(String[] tokens)
