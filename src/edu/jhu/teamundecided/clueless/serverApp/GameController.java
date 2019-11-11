@@ -26,6 +26,7 @@ public class GameController
    private boolean _gameStarted;
    private GameBoard _gb;
    DeckController _deckController;
+   private int numberOfPlayers;
    private int turn;
    private boolean _gameOver;
 
@@ -59,6 +60,7 @@ public class GameController
          _server.broadcast("Game has already been started...");
       }
       _deckController.dealCards(_players);
+      numberOfPlayers = _players.size();
       turn = getFirstTurn();
       runGame();
    }
@@ -74,7 +76,6 @@ public class GameController
 
    public void runGame() throws IOException, InterruptedException {
       Player currentPlayer;
-      int numberOfPlayers = _players.size();
       while (!_gameOver)
       {
          currentPlayer = _players.get(turn);
@@ -141,7 +142,7 @@ public class GameController
       _server.broadcast(msg);
 
       int marker = turn + 1; //start with the next user to begin disproving
-      marker = marker % 6;
+      marker = marker % numberOfPlayers;
       String disprovingCard = null;
       while(marker != turn && disprovingCard == null)
       {
@@ -159,8 +160,8 @@ public class GameController
 //            _players.get(turn).sendMessage(_players.get(marker).getUserID() + " has shown you the " + disprovingCard + " card");
          }
 
-         marker = marker ++;
-         marker = marker % 6;
+         marker ++;
+         marker %= numberOfPlayers;
       }
       if(disprovingCard == null){
          _server.broadcast("Nobody disproved the suggestion");
@@ -205,6 +206,7 @@ public class GameController
       } else
       {
          msg = _players.get(turn).getCharacterName() + " is WRONG!";
+         _players.get(turn).setStatus(false);
       }
 
       _server.broadcast(msg);
