@@ -147,16 +147,6 @@ public class DeckController
         // the Player object and access the ServerWorker that way.
     }
 
-    // METHODS SHOULD BE MOVED FROM DECKCONTROLLER
-    public String getLocation(Player player)
-    {
-        return "";
-    }
-    // METHODS SHOULD BE MOVED FROM DECKCONTROLLER
-    public boolean isRoom(String location){
-        return true;
-    }
-
     ////// DEBUG Methods ///////////////////////
 //    public void selectStackCaseFile(String suspect, String room, String weapon)
 //    {

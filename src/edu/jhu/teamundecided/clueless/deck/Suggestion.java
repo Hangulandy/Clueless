@@ -1,6 +1,5 @@
 package edu.jhu.teamundecided.clueless.deck;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Suggestion

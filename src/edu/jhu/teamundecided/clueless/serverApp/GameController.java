@@ -14,7 +14,6 @@ import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
 import edu.jhu.teamundecided.clueless.gameBoard.Room;
 import edu.jhu.teamundecided.clueless.player.Player;
-import javafx.application.Platform;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -269,22 +268,6 @@ public class GameController
       _server.broadcastTextMessage(msg);
       return accusationCorrect;
    }
-
-
-   public String getPlayerLocation(Player player)
-   {
-
-      return _deckController.getLocation(player);
-   }
-
-
-   public boolean canMakeSuggestion(Player player)
-   {
-
-      String location = _deckController.getLocation(player);
-      return _deckController.isRoom(location);
-   }
-
 
    private int getFirstTurn()
    {
