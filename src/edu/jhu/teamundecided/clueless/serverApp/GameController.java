@@ -73,6 +73,11 @@ public class GameController
       _server.broadcastTextMessage(player.toString());
    }
 
+   public ArrayList<Player> getPlayers()
+   {
+      return _players;
+   }
+
    public void runGame() throws IOException, InterruptedException {
       Player currentPlayer;
       while (!_gameOver)

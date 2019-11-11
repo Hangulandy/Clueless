@@ -69,7 +69,8 @@ public class CluelessClient
       if (!client.connect())
       {
          System.err.println("Connect failed.");
-      } else
+      }
+      else
       {
          System.out.println("Connect successful");
 
@@ -186,7 +187,6 @@ public class CluelessClient
 
    private void receiveUserName()
    {
-
       System.out.println("Please enter a user name: ");
       _userName = _scanner.nextLine().trim();
    }
@@ -194,7 +194,6 @@ public class CluelessClient
 
    private boolean login(String userName) throws IOException
    {
-
       String cmd = "login " + userName + "\n";
       _serverOut.write(cmd.getBytes());
 

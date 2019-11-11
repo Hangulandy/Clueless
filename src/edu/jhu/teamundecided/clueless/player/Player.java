@@ -22,11 +22,8 @@ public class Player
    private Hand _playerHand;
 
 
-   public Player(ServerWorker serverWorker)
+   public Player()
    {
-
-      _userName = serverWorker.getUserName();
-      _serverWorker = serverWorker;
       _isActive = true;
       _playerNum = ++numPlayers; // set this player number to current player count
       _playerHand = new Hand();
@@ -58,6 +55,13 @@ public class Player
             _currentLocation = new Room("S06");
             break;
       }
+   }
+
+   public Player(ServerWorker serverWorker)
+   {
+      this();
+      _userName = serverWorker.getUserName();
+      _serverWorker = serverWorker;
 
       System.out.println("Player successfully created for " + _userName);
    }
@@ -249,6 +253,11 @@ public class Player
 
       return _currentLocation;
 
+   }
+
+   public void setLocation(Room room)
+   {
+      this._currentLocation = room;
    }
 
 
