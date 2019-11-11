@@ -7,8 +7,6 @@ adapted for use in this system by Andrew Johnson.
  */
 package edu.jhu.teamundecided.clueless.serverApp;
 
-import edu.jhu.teamundecided.clueless.player.Player;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -20,8 +18,7 @@ public class ServerWorker extends Thread
    private final Server _server;
    private String _userName = null;
    private OutputStream _outputStream;
-   private Player _replyToPlayer;
-
+   private BufferedReader reader;
 
    /*
    The default constructor should be called by the Server. It will set this server to the calling server. It will set
@@ -105,7 +102,6 @@ public class ServerWorker extends Thread
    {
 
       System.out.println("Reply received : " + concatenateTokens(tokens, 1, tokens.length - 1));
-         _replyToPlayer.receiveReplyFromServerWorker(tokens);
    }
 
 
@@ -260,6 +256,8 @@ public class ServerWorker extends Thread
 
       if (_userName != null)
       {
+         StringBuilder finalMessage = new StringBuilder(outMsg);
+         finalMessage.append("\n");
          _outputStream.write(outMsg.getBytes());
          System.out.println("Message sent : " + outMsg);
       }
@@ -272,17 +270,24 @@ public class ServerWorker extends Thread
       StringBuilder outMsg = new StringBuilder();
 
       outMsg.append("msg system ");
+      outMsg.append(msg);
 
       send(outMsg.toString());
 
    }
 
 
-   public void sendForReply(String toString, Player player) throws IOException
+   public Socket get_clientSocket()
    {
 
-      _replyToPlayer = player;
-      send(toString);
+      return _clientSocket;
+   }
+
+
+   public BufferedReader getReader()
+   {
+
+      return reader;
    }
 
 
