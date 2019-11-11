@@ -68,9 +68,7 @@ public class Player
    public String getMoveCommand() throws IOException, InterruptedException
    {
 
-      // TODO must have getPossibleMoves method in Room
-
-      ArrayList<Room> possibleMoves = _currentLocation.getAdjacentRooms();
+      ArrayList<Room> possibleMoves = _currentLocation.getPossibleMoves();
 
       if (possibleMoves.size() == 0)
       {

@@ -12,7 +12,6 @@ import edu.jhu.teamundecided.clueless.deck.Card;
 import edu.jhu.teamundecided.clueless.deck.DeckController;
 import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
-import edu.jhu.teamundecided.clueless.gameBoard.Room;
 import edu.jhu.teamundecided.clueless.player.Player;
 
 import java.io.IOException;
@@ -128,6 +127,8 @@ public class GameController
                _gb.movePlayer(player, "hallway_3");
                break;
          }
+         _server.broadcastTextMessage(
+                 player.getCharacterName() + " will start in " + player.getLocation().getRoomName());
       }
 
    }
@@ -136,21 +137,43 @@ public class GameController
    public void executeTurn(Player currentPlayer) throws IOException, InterruptedException
    {
 
+      // If the player is still active
       if (currentPlayer.getStatus())
       {
-         Room currentLocation = currentPlayer.getLocation();
+
+         // If the player successfully moved
+         if (moveSequence(currentPlayer))
+         {
+            // Make a suggestion if there are no possible moves
+            suggestSequence(currentPlayer);
+         } else {
+            // Player cannot make a suggestion because could not move
+            _server.broadcastTextMessage("Because " + currentPlayer.getCharacterName() + " cannot move, " +
+                    "they also cannot make a suggestion.");
+         }
+
+         if (accuseSequence(currentPlayer))
+         {
+            // TODO Game over procedures
+         }
+
+         /*
+         TODO This code functionality has been moved to other methods, but we need to check to make sure there are no
+         errors
+          */
+         // Room currentLocation = currentPlayer.getLocation();
          // You can uncomment this if you want to make sure the program is successfully looping through here
          // _server.broadcastTextMessage(currentPlayer.getCharacterName() + " is currently in the " + currentLocation.getRoomName());
-         boolean canMove = true;
+//         boolean canMove = true;
 //         if (canMove){
 //            String desiredLocation = currentPlayer.getMoveCommand();
 //            move(currentPlayer, desiredLocation);
 //         }
 
-         boolean canSuggest = true;
-         //TODO canSuggest = _gb.isRoom(currentPlayer.getLocation());
+//         boolean canSuggest = true;
+         // TODO canSuggest = _gb.isRoom(currentPlayer.getLocation());
 //         Suggestion sug = currentPlayer.getSuggestionCommand(_deckController.getSuggestionDeck().getCards());
-//         suggest(sug);
+//         handleSuggest(sug);
 //         _gb.movePlayer("", "");
 
          /*Accusation acc = currentPlayer.getAccusationCommand();
@@ -159,30 +182,109 @@ public class GameController
           */
 
 //         currentPlayer.getAccusationCommand(_deckController.getSuggestionDeck().getCards());
+      } else
+      {
+         // Player is not active
+         _server.broadcastTextMessage(currentPlayer.getCharacterName() + " must pass because they incorrectly accused");
+      }
+   }
+
+
+   private boolean moveSequence(Player currentPlayer) throws IOException, InterruptedException
+   {
+      _server.broadcastTextMessage(
+              currentPlayer.getCharacterName() + " is currently in the " + currentPlayer.getLocation().getRoomName());
+
+      String desiredRoom = currentPlayer.getMoveCommand();
+
+      if (desiredRoom != null)
+      {
+         move(currentPlayer, desiredRoom);
+         return true;
+      } else
+      {
+         _server.broadcastTextMessage(currentPlayer.getCharacterName() + " has no place to move.");
+         return false;
+      }
+
+   }
+
+
+   private void suggestSequence(Player currentPlayer) throws IOException
+   {
+
+      Suggestion suggestion = currentPlayer.getSuggestionCommand(_deckController.getSuggestionDeck());
+
+      _server.broadcastTextMessage(currentPlayer + "has suggested that " + suggestion.toString());
+
+      handleSuggest(suggestion);
+   }
+
+
+   private boolean accuseSequence(Player currentPlayer) throws IOException, InterruptedException
+   {
+      // Get suggestion object from player; will be null if player chose not to accuse
+      Suggestion accusationCommand = currentPlayer.getAccusationCommand(_deckController.getSuggestionDeck());
+
+      if (accusationCommand != null)
+      {
+         // Player made an accusation
+         _server.broadcastTextMessage(
+                 currentPlayer + "has made an accusation that " + accusationCommand.toString() + "!");
+
+         boolean wasCorrect = _deckController.checkAccusation(accusationCommand);
+
+         // Trace and check this
+
+         String msg;
+
+         if (wasCorrect)
+         {
+            msg = _players.get(_turn).getCharacterName() + " is RIGHT!";
+            _gameOver = true;
+         } else
+         {
+            msg = _players.get(_turn).getCharacterName() + " is WRONG!";
+            _players.get(_turn).setStatus(false);
+         }
+
+         _server.broadcastTextMessage(msg);
+         return wasCorrect;
+
+      } else
+      {
+         // Player did not make an accusation
+         _server.broadcastTextMessage(currentPlayer.getCharacterName() + " chose not to make an accusation.");
+         return false;
       }
    }
 
 
    public void move(Player player, String room)
    {
-      //TODO duplicates movePlayer method in GameBoard
-//      boolean success = _gb.movePlayer(player.getCharacterName(), room);
-//
-//      if (success)
-//      {
-//         _server.broadcastTextMessage(player.getCharacterName() + " moves to the " + room);
-//         player.setLocation(room);
-//      } else
-//      {
-//         _server.broadcastTextMessage(player.getCharacterName() + " invalid move");
-//      }
+
+      boolean success = _gb.movePlayer(player, room);
+
+      if (success)
+      {
+         _server.broadcastTextMessage(player.getCharacterName() + " moves to the " + room);
+         /*
+         This is handled by the gameboard class now
+         player.setLocation(room);
+          */
+      } else
+      {
+         _server.broadcastTextMessage(player.getCharacterName() + " invalid move");
+      }
    }
 
 
-   public void suggest(Suggestion sug) throws IOException
+   public void handleSuggest(Suggestion sug) throws IOException
    {
 
-      String suspect = sug.getCard(Card.CardType.Suspect).getCardName();
+      // This functionality already exists in the calling method
+
+/*      String suspect = sug.getCard(Card.CardType.Suspect).getCardName();
       String weapon = sug.getCard(Card.CardType.Weapon).getCardName();
       String rm = sug.getCard(Card.CardType.Room).getCardName();
       String msg =
@@ -191,7 +293,7 @@ public class GameController
                       "the " + rm + "!";
 
       System.out.println(msg);
-      _server.broadcastTextMessage(msg);
+      _server.broadcastTextMessage(msg);*/
 
       int marker = _turn + 1; //start with the next user to begin disproving
       marker = marker % numberOfPlayers;
@@ -242,7 +344,10 @@ public class GameController
    }
 
 
-   public boolean accuse(String suspect, String weapon, String room)
+   /*
+   TODO Replaced with accuseSequence; check to make sure no functionality has been lost
+    */
+/*   public boolean accuse(String suspect, String weapon, String room)
    {
 
       String msg =
@@ -267,7 +372,8 @@ public class GameController
 
       _server.broadcastTextMessage(msg);
       return accusationCorrect;
-   }
+   }*/
+
 
    private int getFirstTurn()
    {

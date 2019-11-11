@@ -5,9 +5,17 @@ import java.util.ArrayList;
 public class Suggestion
 {
     private ArrayList<Card> _suggestionList;
+    private String _suspect;
+    private String _weapon;
+    private String _room;
 
     public Suggestion(String suspect, String room, String weapon)
     {
+
+        _suspect = suspect;
+        _weapon = weapon;
+        _room = room;
+
         _suggestionList = new ArrayList<>();
         _suggestionList.add(new Card(suspect, Card.CardType.Suspect));
         _suggestionList.add(new Card(room, Card.CardType.Room));
@@ -30,5 +38,11 @@ public class Suggestion
     public ArrayList<Card> getSuggestedCards()
     {
         return _suggestionList;
+    }
+
+    public String toString()
+    {
+        return _suspect + " did it with the " + _weapon + " in the " + _room;
+
     }
 }

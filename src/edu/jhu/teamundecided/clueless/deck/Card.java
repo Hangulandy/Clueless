@@ -5,7 +5,8 @@ public class Card
     private String _cardName;
     private CardType _type;
 
-    public enum CardType
+
+   public enum CardType
     {
         Suspect,
         Room,
