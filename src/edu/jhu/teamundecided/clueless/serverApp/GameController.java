@@ -240,11 +240,11 @@ public class GameController
 
          if (wasCorrect)
          {
-            msg = _players.get(_turn).getCharacterName() + " is RIGHT!";
+            msg = currentPlayer.getCharacterName() + " is RIGHT!";
             _gameOver = true;
          } else
          {
-            msg = _players.get(_turn).getCharacterName() + " is WRONG!";
+            msg = currentPlayer.getCharacterName() + " is WRONG!";
             _players.get(_turn).setStatus(false);
          }
 
