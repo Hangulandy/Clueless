@@ -1,10 +1,3 @@
-/*
-The CluelessClient class is an application that handles client-side operations, reads messages from the corresponding
- ServerWorker, and sends messages to the same.
-
-This implementation is borrowed from a tutorial at https://fullstackmastery.com/ep4 written by Jim Liao. It was
-adapted for use in this system by Andrew Johnson.
- */
 package edu.jhu.teamundecided.clueless.clientApp;
 
 import java.io.*;
@@ -69,7 +62,7 @@ public class CluelessClient
          public void onMessage(String fromLogin, String msgBody)
          {
 
-            System.out.println("You got a message from " + fromLogin + " ===> " + msgBody);
+            System.out.println("\nYou got a message from " + fromLogin + " ===> " + msgBody);
          }
       });
 
@@ -280,6 +273,9 @@ public class CluelessClient
                {
                   handleMultipleChoicePrompt(tokens);
                } else if ("room".equalsIgnoreCase(cmd))
+               {
+                  handleMultipleChoicePrompt(tokens);
+               } else if ("refutation".equalsIgnoreCase(cmd))
                {
                   handleMultipleChoicePrompt(tokens);
                } else if ("askAccuse".equalsIgnoreCase(cmd))

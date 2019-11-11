@@ -5,6 +5,7 @@ import edu.jhu.teamundecided.clueless.deck.Suggestion;
 import edu.jhu.teamundecided.clueless.gameBoard.Room;
 import edu.jhu.teamundecided.clueless.serverApp.ServerWorker;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,21 +17,10 @@ public class Player
    private String _characterName = "";
    private Room _currentLocation;
    private String _userName;
-
-   private Hand _playerHand;
-
-
-   public ServerWorker get_serverWorker()
-   {
-
-      return _serverWorker;
-   }
-
-
    private ServerWorker _serverWorker;
    private boolean _isActive;
-   private ArrayList<Card> _hand;
-   private String[] _recentReply = null;
+   private Hand _playerHand;
+
 
    public Player(ServerWorker serverWorker)
    {
@@ -73,6 +63,237 @@ public class Player
    }
 
 
+   /*
+   Gets the possible rooms to move, prompts the user to choose a room to move based on these, awaits the response,
+   and returns the response as a String
+   */
+   public String getMoveCommand() throws IOException, InterruptedException
+   {
+
+      // TODO must have getPossibleMoves method in Room
+
+      ArrayList<Room> possibleMoves = _currentLocation.getAdjcentRooms();
+
+      if (possibleMoves.size() == 0)
+      {
+         return null;
+      }
+
+      sendMovePrompt(possibleMoves);
+      String[] response = getResponse();
+
+      System.out.println(response[1]);
+
+      return response[1];
+
+   }
+
+   /*
+   Prompts the user to choose a room to move based on the parameter possibleMoves
+    */
+   private void sendMovePrompt(ArrayList<Room> possibleMoves) throws IOException
+   {
+
+      StringBuilder msg = new StringBuilder();
+
+      msg.append("move");
+
+      for (Room room : possibleMoves)
+      {
+         msg.append(" ");
+         msg.append(room.getRoomName());
+      }
+
+      _serverWorker.send(msg.toString());
+
+      System.out.println("Awaiting reply from user...");
+   }
+
+
+   /*
+   Uses the serverWorker BufferedReader object to get the response from the client here, tokenize it, and return the
+   tokenized string (String[])
+    */
+   private String[] getResponse() throws IOException
+   {
+
+      BufferedReader reader = _serverWorker.getReader();
+
+      String response = reader.readLine();
+
+      System.out.println("Response: " + response);
+
+      String[] output = response.split(" ");
+
+      return output;
+   }
+
+
+   /*
+   Prompts the user to suggest a suspect, awaits response, suggest a weapon, awaits response, and then finally
+   creates and returns a Suggestion object with the cardNames for those two and the current room
+    */
+   public Suggestion getSuggestionCommand(ArrayList<Card> deck) throws IOException
+   {
+
+      _serverWorker.send("It is time to make a suggestion...");
+
+      sendSuggest(deck, Card.CardType.Suspect);
+      String suspect = getResponse()[1];
+
+      sendSuggest(deck, Card.CardType.Weapon);
+      String weapon = getResponse()[1];
+
+      return new Suggestion(suspect, weapon, _currentLocation.getRoomName());
+   }
+
+
+   /*
+   Sends the prompt command to get user suggestion based on the card type being asked.
+    */
+   private void sendSuggest(ArrayList<Card> deck, Card.CardType cardType) throws IOException
+   {
+
+      StringBuilder msg = new StringBuilder();
+
+      msg.append(cardType);
+
+      for (Card card : deck)
+      {
+         if (card.getType() == cardType)
+         {
+            msg.append(" ");
+            msg.append(card.getCardName());
+         }
+      }
+
+      _serverWorker.send(msg.toString());
+   }
+
+
+   /*
+   Prompts the user to choose whether or not he wants to make an accusation and receives response. If "yes", get
+   suggestion for suspect, weapon, and room and await responses (in turn). Then create and return a Suggestion object
+    with the cardNames for those three chosen cards.
+    */
+   public Suggestion getAccusationCommand(ArrayList<Card> deck) throws IOException, InterruptedException
+   {
+
+      askIfWantAccuse();
+      String response = getResponse()[1];
+
+      if (response.equalsIgnoreCase("yes"))
+      {
+         _serverWorker.sendTextMessage("It is time to make an accusation...");
+
+         sendSuggest(deck, Card.CardType.Suspect);
+         String suspect = getResponse()[1];
+
+         sendSuggest(deck, Card.CardType.Weapon);
+         String weapon = getResponse()[1];
+
+         sendSuggest(deck, Card.CardType.Room);
+         String room = getResponse()[1];
+
+         return new Suggestion(suspect, weapon, room);
+
+      }
+      return null;
+   }
+
+
+   /*
+   Prompts the user to choose whether or not to make an accusation
+    */
+   private void askIfWantAccuse() throws IOException
+   {
+
+      _serverWorker.send("askAccuse Would you like to make an accusation?");
+   }
+
+
+   /*
+   Prompts the user to choose one of the cards that matches the suggestion (disprovingCards), receives the user
+   response, then passes the cardName to the GameController
+    */
+   public String disproveSuggestion(ArrayList<Card> disprovingCards) throws IOException
+   {
+
+      _serverWorker.sendTextMessage("You have a card that can disprove the suggestion.");
+
+      StringBuilder msg = new StringBuilder();
+
+      msg.append("refutation");
+
+      for (Card card : disprovingCards)
+      {
+         msg.append(" ");
+         msg.append(card.getCardName());
+      }
+
+      _serverWorker.send(msg.toString());
+
+      String response = getResponse()[1];
+
+      return response;
+   }
+
+
+   /*
+   These are self-explanatory
+    */
+
+
+   public Room getLocation()
+   {
+
+      return _currentLocation;
+
+   }
+
+
+   public String getCharacterName()
+   {
+
+      return _characterName;
+   }
+
+
+   public boolean getStatus()
+   {
+
+      return _isActive;
+   }
+
+
+   public void setStatus(boolean status)
+   {
+
+      _isActive = status;
+   }
+
+
+   public Hand getPlayerHand()
+   {
+
+      return this._playerHand;
+   }
+
+
+   public void setPlayerHand(Hand hand)
+   {
+
+      this._playerHand = hand;
+   }
+
+
+   public ServerWorker get_serverWorker()
+   {
+
+      return _serverWorker;
+   }
+
+
    public String getUserID()
    {
 
@@ -82,140 +303,9 @@ public class Player
 
    public String toString()
    {
+
       return _characterName + " being played by " + _userName;
    }
 
-
-   public String getMoveCommand() throws IOException
-   {
-
-      StringBuilder msg = new StringBuilder();
-
-      msg.append("move");
-
-      ArrayList<Room> possibleMove = _currentLocation.getAdjcentRooms();
-
-      if (possibleMove.size() == 0)
-      {
-         return null;
-      }
-
-      for (Room room : possibleMove)
-      {
-         msg.append(" ").append(room.getRoomName());
-      }
-
-      msg.append("\n");
-
-      _serverWorker.sendForReply(msg.toString(), this);
-
-      return null;
-
-   }
-
-
-   public Suggestion getSuggestionCommand(ArrayList<Card> deck) throws IOException
-   {
-
-      _serverWorker.send("It is time to make a suggestion...\n");
-
-      getSuggest(deck, Card.CardType.Suspect);
-      // getSuggest(deck, Card.CardType.Weapon);
-
-      return new Suggestion("", "", _currentLocation.getRoomName());
-   }
-
-
-   private void getSuggest(ArrayList<Card> deck, Card.CardType cardType) throws IOException
-   {
-
-      StringBuilder msg = new StringBuilder();
-
-      msg.append(cardType);
-      msg.append(" ");
-
-      for (Card card : deck)
-      {
-         if (card.getType() == cardType)
-         {
-            msg.append(card.getCardName());
-            msg.append(" ");
-         }
-      }
-
-      msg.append("\n");
-
-      _serverWorker.sendForReply(msg.toString(), this);
-   }
-
-
-   public Suggestion getAccusationCommand(ArrayList<Card> deck) throws IOException, InterruptedException
-   {
-      return new Suggestion("", "", this._currentLocation.getRoomName());
-   }
-
-
-   private void askIfWantAccuse() throws IOException
-   {
-
-      _serverWorker.sendForReply("askAccuse Would you like to make an accusation?\n", this);
-   }
-
-
-   public void disproveSuggestion(ArrayList<Card> matchingCards) throws IOException
-   {
-
-      StringBuilder msg = new StringBuilder();
-
-      msg.append("disprove");
-
-      for (Card card : matchingCards)
-      {
-         msg.append(card.getCardName());
-         msg.append(" ");
-      }
-
-      msg.append("\n");
-
-      _serverWorker.sendForReply(msg.toString(), this);
-   }
-
-
-   public void receiveReplyFromServerWorker(String[] tokens)
-   {
-
-      _recentReply = tokens;
-      System.out.println("Received Message : " + tokens[0]);
-   }
-
-   public Room getLocation()
-   {
-
-      return _currentLocation;
-
-   }
-
-   public String getCharacterName()
-   {
-      return _characterName;
-   }
-
-   public boolean getStatus(){
-      return _isActive;
-   }
-
-   public void setStatus(boolean status){
-      _isActive = status;
-   }
-
-   public Hand getPlayerHand()
-   {
-      return this._playerHand;
-   }
-
-   public void setPlayerHand(Hand hand)
-   {
-      this._playerHand = hand;
-   }
 
 }

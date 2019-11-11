@@ -1,196 +1,219 @@
-//By: Trey Hoffman, thoffm10@jhu.edu
-//Description: This program draws out a minimal text based game board for "Clueless". 
-//Use the menu to move players around and see the game board update.  
-package edu.jhu.teamundecided.clueless.gameBoard;
+// package edu.jhu.teamundecided.clueless.gameBoard;
 
 import java.util.*;
 
-
 public class GameBoard{
 
-	//dictionary to hold player locations
-	public static HashMap<String, String> playersMap = new HashMap<>();
+	public Room blank = new Room("");
+	public Room study = new Room("study");
+	public Room hall = new Room("hall");
+	public Room lounge = new Room("lounge");
+	public Room library = new Room("library");
+	public Room billiard_room = new Room("billiard_room");
+	public Room dining_room = new Room("dining_room");
+	public Room conservatory = new Room("conservatory");
+	public Room ballroom = new Room("ballroom");
+	public Room kitchen = new Room("kitchen");
+	public Room hallway_1 = new Room("hallway_1");
+	public Room hallway_2 = new Room("hallway_2");
+	public Room hallway_3 = new Room("hallway_3");
+	public Room hallway_4 = new Room("hallway_4");
+	public Room hallway_5 = new Room("hallway_5");
+	public Room hallway_6 = new Room("hallway_6");
+	public Room hallway_7 = new Room("hallway_7");
+	public Room hallway_8 = new Room("hallway_8");
+	public Room hallway_9 = new Room("hallway_9");
+	public Room hallway_10 = new Room("hallway_10");
+	public Room hallway_11 = new Room("hallway_11");
+	public Room hallway_12 = new Room("hallway_12");
+
+	public ArrayList<Room> rooms = new ArrayList<>(Arrays.asList(study, hallway_1, hall, hallway_2, lounge, hallway_3, blank, hallway_4, blank, hallway_5, library, hallway_6, billiard_room, hallway_7, dining_room, hallway_8, blank, hallway_9, blank, hallway_10, conservatory, hallway_11, ballroom, hallway_12, kitchen));
+
+	public static void main(String[] args){
+		GameBoard gb = new GameBoard();
+
+		//study
+		ArrayList<Room> adjacentRooms = new ArrayList<>(Arrays.asList(gb.billiard_room, gb.hallway_1, gb.hallway_3));
+		gb.study.setAdjacentRooms(adjacentRooms);
+		
+		//hall
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_1, gb.hallway_2, gb.hallway_4));
+		gb.hall.setAdjacentRooms(adjacentRooms);
+
+		//lounge
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_2, gb.hallway_5, gb.billiard_room));
+		gb.lounge.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_3, gb.hallway_6, gb.hallway_8));
+		gb.library.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_4, gb.hallway_6, gb.hallway_7, gb.hallway_9));
+		gb.billiard_room.setAdjacentRooms(adjacentRooms);
 	
-	//array of arrays to hold the game locations
-	public static String[][] board = 
-		{
-			{"   ", "R01", "H01", "R02", "H02", "R03", "   "},
-			{"S06", "H03", "T01", "H04", "T02", "H05", "S01"},
-			{"   ", "R04", "H06", "R05", "H07", "R06", "   "},
-			{"S05", "H08", "T03", "H09", "T04", "H10", "S02"},
-			{"   ", "R07", "H11", "R08", "H12", "R09", "   "},
-			{"   ", "   ", "S04", "   ", "S03", "   ", "   "}
-		};
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_5, gb.hallway_7, gb.hallway_10));
+		gb.dining_room.setAdjacentRooms(adjacentRooms);
 
-		// Labeled game board, formatting is not complete
-		// {
-		// 	{"       ", "Kitchen     ", "Hallway 1     ", "Ballroom   ", "Hallway 2     ", "Study     ", "       "},
-		// 	{"Start 6", "Hallway 3   ", "Secret Passage", "Hallway 4  ", "Secret Passage", "Hallway 5 ", "Start 1"},
-		// 	{"       ", "Conservatory", "Hallway 6	   ", "Dining room", "Hallway 7     ", "Billiard  ", "       "},
-		// 	{"Start 5", "Hallway 8   ", "Secret Passage", "Hallway 9  ", "Secret Passage", "Hallway 10", "Start 2"},
-		// 	{"       ", "Lounge      ", "Hallway 11    ", "Hall       ", "Hallway 12    ", "Library   ", "       "},
-		// 	{"       ", "            ", "Start 4       ", "           ", "Start 3       ", "          ", "       "}
-		// };
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_8, gb.hallway_11, gb.billiard_room));
+		gb.conservatory.setAdjacentRooms(adjacentRooms);
 
-	static void drawBoard(String[][] board, HashMap<String, String> playersMap, String previousMove) {
-		//Print out the banner
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-		System.out.println("###################################################################################");
-		System.out.println("################################ Clueless Game Board ##############################");
-		System.out.println("###################################################################################");
-		System.out.println("Board Key:");
-		System.out.println("R: Room");
-		System.out.println("S: Starting Position");
-		System.out.println("H: Hallway");
-		System.out.println("T: Secret Tunnel");	
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_9, gb.hallway_11, gb.hallway_12));
+		gb.ballroom.setAdjacentRooms(adjacentRooms);
 
-		//no previous move for the first run. 
-		if(previousMove != ""){
-			System.out.println("\n                    Previous Move: " + previousMove);
-		}
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hallway_10, gb.hallway_12, gb.billiard_room));
+		gb.kitchen.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.study, gb.hall));
+		gb.hallway_1.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hall, gb.lounge));
+		gb.hallway_2.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.study, gb.library));
+		gb.hallway_3.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.hall , gb.billiard_room));
+		gb.hallway_4.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.lounge , gb.dining_room));
+		gb.hallway_5.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.library , gb.billiard_room));
+		gb.hallway_6.setAdjacentRooms(adjacentRooms);
+	
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.billiard_room , gb.dining_room));
+		gb.hallway_7.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.library , gb.conservatory));
+		gb.hallway_8.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.billiard_room , gb.ballroom));
+		gb.hallway_9.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.dining_room , gb.kitchen));
+		gb.hallway_10.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.conservatory , gb.ballroom));
+		gb.hallway_11.setAdjacentRooms(adjacentRooms);
+
+		adjacentRooms = new ArrayList<>(Arrays.asList(gb.ballroom , gb.kitchen));
+		gb.hallway_12.setAdjacentRooms(adjacentRooms);
+
+		//create players here for the meantime
+		ArrayList<Player> players = new ArrayList<Player>();
+		Player scarlet = new Player("Miss_Scarlet", gb.hallway_2);
+		Player mustard = new Player("Col._Mustard", gb.hallway_5);
+		Player white = new Player("Mrs._White", gb.hallway_12);
+		Player green = new Player("Mr._Green", gb.hallway_11);
+		Player peacock = new Player("Mrs._Peacock", gb.hallway_8);
+		Player plum = new Player("Prof._Plum", gb.hallway_3);
 		
-		System.out.println("###################################################################################");
-		System.out.println("___________________________________________________________________________________\n");
+		players.add(scarlet);
+		players.add(mustard);
+		players.add(white);
+		players.add(green);
+		players.add(peacock);
+		players.add(plum);
 
-		//iterate over board to print
-		for(int i = 0; i <= 5; i++){
-			for(int j = 0; j <= 6; j++){
-				if(board[i][j] == "   "){
-					System.out.print("            ");
-				}
-				else{
-					System.out.print(board[i][j] + "         ");
+		System.out.println("\nRender board:");
+		render(gb, players);
+
+		System.out.println("\nGet possible moves for Mrs. Peacock:");
+		ArrayList<Room> moves = getPossibleMoves(peacock, players, gb);
+
+		// Print out mrs.peacock's moves
+		for(Room r : moves){
+			System.out.println(r.getRoomName());
+		}
+
+		//move mrs peacock
+		System.out.println("\nMove Mrs. Peacock to Conservatory");
+		move(peacock, gb.conservatory, players, gb);
+
+
+		System.out.println("\nGet possible moves for Mrs. Peacock:");
+		moves = getPossibleMoves(peacock, players, gb);
+
+		// Print out mrs.peacock's moves after her player moves
+		for(Room r : moves){
+			System.out.println(r.getRoomName());
+		}
+	}
+
+	public static void render(GameBoard gb, ArrayList<Player> players){
+		String roomRow = "";
+		String playerRow = "";
+		int maxWidth = 25;
+
+		String divider = "";
+		while(divider.length() < maxWidth*5){
+			divider += "_";
+		}
+
+		for(int i = 0; i < gb.rooms.size(); i++){
+			Room room = gb.rooms.get(i);
+			String roomName = room.getRoomName();		
+			int length = roomName.length();
+			String playersInRoom = "";
+			
+			for(int k = 0; k < players.size(); k++){
+				Player player = players.get(k); 
+			
+				if(player.getLocation() == room){
+					if(playersInRoom == "")
+						playersInRoom = player.getName();
+					else if (playersInRoom != "")
+						playersInRoom = playersInRoom + ", " + player.getName();
 				}
 			}
-			
-			System.out.print("\n");
 
-			//print out the players if they are present in any of this row's locations
-			for(int j = 0; j <= 6; j++){
-				String location = String.valueOf(i)+','+String.valueOf(j);
+			while(playersInRoom.length() < maxWidth){
+				playersInRoom += " ";
+			}
+
+			playerRow = playerRow + playersInRoom;
+			
+			while(roomName.length() < maxWidth){
+				roomName += " ";
+			}
+
+			roomRow = roomRow + roomName;
+
+			if((i + 1)%5==0 && i != 0){
+				System.out.println(divider);
+				System.out.println(roomRow + "\n");
+				System.out.println(playerRow + "\n\n\n");
+				roomRow = "";
+				playerRow = "";
+			}
+		}	
+	}
+
+	public static ArrayList<Room> getPossibleMoves(Player player, ArrayList<Player> players, GameBoard gb){
+
+		ArrayList<Room> adjacentRooms = player.getLocation().getAdjacentRooms();
+
+		for(int i = 0; i < adjacentRooms.size(); i++){
+			Room r = adjacentRooms.get(i);
+
+			//can't move to a hallway if another person is in it
+			if(r.getRoomName().startsWith("hallway")){
 				
-				if(playersMap.containsValue(location)){
-					List<String> playersAtLocation = getAllKeysForValue(playersMap, location);
-					int length = playersAtLocation.size();
-					length = 3*length;
-					String blank = "";
-				
-					//create whitespace for formatting	
-					if(length < 12){
-						int whiteSpace = 12 - length	;
-						for(int k = 0; k < whiteSpace; k++){
-							blank = blank + " ";
-						}
+				for(int j = 0; j < players.size(); j++){
+					Player p = players.get(j);
+
+					if(p.getLocation() == r){
+						adjacentRooms.remove(r);
+						i = i - 1;
 					}
-					System.out.print(playersAtLocation + blank);
-				}
-				else{
-					System.out.print("            ");
-				}
-			}
-			System.out.println("\n\n\n___________________________________________________________________________________\n");
-		}
-	}
-
-	public static void movePlayer(String player, String position){
-		position = position.trim();
-
-		//convert the position string to a string showing index location
-		for(int i = 0; i <= 5; i++){
-			for(int j = 0; j <= 6; j++){
-				if(board[i][j].trim().equals(position)){
-					position = String.valueOf(i) + "," + String.valueOf(j);
-					break;
 				}
 			}
 		}
 
-		//get the player's last location
-		String from = playersMap.get(player);
-		int row = Integer.parseInt(from.split(",")[0]);
-		int col = Integer.parseInt(from.split(",")[1]);
-		from = board[row][col];
-		
-		//update the players location
-		playersMap.put(player, position);
-
-		//get the location the player just moved to 
-		String to = playersMap.get(player);
-		row = Integer.parseInt(to.split(",")[0]);
-		col = Integer.parseInt(to.split(",")[1]);
-		to = board[row][col];
-
-		//parse string for what the previous move was and redraw the game board
-		String previousMove = "Player "+ player +" moved from " + from + " to " + to;
-		drawBoard(board, playersMap, previousMove);
+		return adjacentRooms;
 	}
 
-	static void initGame(){
-
-		//initialize the game board, placing all players in their respective locations
-		playersMap.put("1", "1,6");
-		playersMap.put("2", "3,6");
-		playersMap.put("3", "5,4");
-		playersMap.put("4", "5,2");
-		playersMap.put("5", "3,0");
-		playersMap.put("6", "1,0");
-
-		//draw the initial gameboard
-		drawBoard(board, playersMap, "");
+	public static void move(Player player, Room room, ArrayList<Player> players, GameBoard gb){
+		player.setLocation(room);
+		render(gb, players);
 	}
-
-	//helper method to get all of the players (keys) at a location (value) in the playersMap
-	static <K, V> List<K> getAllKeysForValue(HashMap<K, V> mapOfWords, V value) {
-		List<K> listOfKeys = null; 
-		if(mapOfWords.containsValue(value)){
-			listOfKeys = new ArrayList<>();				
-			for (HashMap.Entry<K, V> entry : mapOfWords.entrySet()){
-				if (entry.getValue().equals(value)){
-					listOfKeys.add(entry.getKey());
-				}
-			}
-		}
-		return listOfKeys;	
-	}
-
-	public static void main(String[] args) {
-		initGame();
-		String input = null;
-			
-		do{
-			//option menu for moving or quitting the program
-			System.out.println("###################################################################################");
-			System.out.println("######################################## Menu #####################################");
-			System.out.println("###################################################################################");
-			System.out.println("m: move a player");
-			System.out.println("q: quit");
-			System.out.print("Select an option: ");
-
-			//get console input 
-			Scanner scan = new Scanner(System.in);	
-			input = scan.nextLine();
-			
-			switch (input) {
-
-			case "m":
-				//prompt user for player selection
-				String player = null;
-				System.out.print("Enter the player you would like to move (1-6): ");
-				player = scan.nextLine();
-				
-				//prompt user for location selection
-				String position = null; 
-				System.out.print("Enter the location you want move player " + player + " to: ");
-				position = scan.nextLine();
-				
-				movePlayer(player, position);
-				break;
-
-			case "q":
-				break;
-			} 
-		} while (!input.equals("q")); 
-	}
-
-	//TODO method getAdjacentRooms
 }

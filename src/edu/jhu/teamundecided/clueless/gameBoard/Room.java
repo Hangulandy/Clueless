@@ -1,4 +1,4 @@
-package edu.jhu.teamundecided.clueless.gameBoard;
+// package edu.jhu.teamundecided.clueless.gameBoard;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,7 @@ public class Room
 {
     private String _roomName;
     private ArrayList<Room> _adjacentRooms;
+    private String _roomType;
 
     public Room(String name)
     {
@@ -17,8 +18,14 @@ public class Room
         return _roomName;
     }
 
-    public ArrayList<Room> getAdjcentRooms()
+    public ArrayList<Room> getAdjacentRooms()
     {
         return _adjacentRooms;
     }
+
+    public void setAdjacentRooms(ArrayList<Room> adjacentRooms)
+    {
+        this._adjacentRooms = adjacentRooms;
+    }
+
 }
