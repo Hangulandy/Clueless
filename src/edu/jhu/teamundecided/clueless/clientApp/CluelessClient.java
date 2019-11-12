@@ -2,6 +2,7 @@ package edu.jhu.teamundecided.clueless.clientApp;
 
 import edu.jhu.teamundecided.clueless.deck.Card;
 import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
+import edu.jhu.teamundecided.clueless.notebook.NoteBook;
 import edu.jhu.teamundecided.clueless.player.Hand;
 
 import java.io.*;
@@ -202,6 +203,8 @@ public class CluelessClient
       {
          System.out.println("The message failed to send.");
       }
+
+      NoteBook.main(null);
    }
 
 
