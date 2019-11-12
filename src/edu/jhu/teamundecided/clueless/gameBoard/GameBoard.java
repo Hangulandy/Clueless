@@ -177,18 +177,24 @@ public class GameBoard
       for (int i = 0; i < rooms.size(); i++)
       {
          Room room = rooms.get(i);
+
          String roomName = room.getRoomName();
-         int length = roomName.length();
+
          String playersInRoom = "";
 
          for (String player : playerLocations.keySet())
          {
-            if (playerLocations.get(player) == roomName)
+            String test = playerLocations.get(player);
+            if (test.equals(roomName))
             {
                if (playersInRoom == "")
+               {
                   playersInRoom = player;
+               }
                else if (playersInRoom != "")
+               {
                   playersInRoom = playersInRoom + ", " + player;
+               }
             }
          }
 
@@ -204,17 +210,19 @@ public class GameBoard
             roomName += " ";
          }
 
-         roomRow = roomRow + roomName;
+         roomRow += roomName;
 
          if ((i + 1) % 5 == 0 && i != 0)
          {
             System.out.println(divider);
             System.out.println(roomRow + "\n");
             System.out.println(playerRow + "\n\n\n");
+
+            roomRow = "";
+            playerRow = "";
          }
       }
    }
-
 
    public String getGameBoardData(ArrayList<Player> players)
    {
