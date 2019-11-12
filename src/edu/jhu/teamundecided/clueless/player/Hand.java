@@ -33,4 +33,17 @@ public class Hand
     {
         this._cards = cards;
     }
+
+
+    public void displayCards()
+    {
+
+        System.out.println("You have the following cards:");
+        for (Card card : _cards)
+        {
+            System.out.println(card.toString());
+        }
+
+        System.out.println();
+    }
 }

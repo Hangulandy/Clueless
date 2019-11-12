@@ -9,7 +9,7 @@ public class Suggestion
     private String _weapon;
     private String _room;
 
-    public Suggestion(String suspect, String room, String weapon)
+    public Suggestion(String suspect, String weapon, String room)
     {
 
         _suspect = suspect;

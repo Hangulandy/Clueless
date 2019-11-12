@@ -137,8 +137,7 @@ public class Player
    public Suggestion getSuggestionCommand(Deck deck) throws IOException
    {
 
-      // TODO fix this send
-      _serverWorker.send("It is time to make a suggestion...");
+      _serverWorker.send("msg system It is time to make a suggestion...");
 
       sendSuggestPrompt(deck, Card.CardType.Suspect);
       String suspect = getResponse()[1];

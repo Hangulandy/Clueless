@@ -90,7 +90,7 @@ public class GameController
 
       placePlayers();
 
-      while (!_gameOver)
+      while (!gameIsOver())
       {
          currentPlayer = _players.get(_turn);
          executeTurn(currentPlayer);
@@ -139,6 +139,8 @@ public class GameController
    public void executeTurn(Player currentPlayer) throws IOException, InterruptedException
    {
 
+      _server.broadcastTextMessage(currentPlayer.toString() + " will start their turn now.");
+
       // If the player is still active
       if (currentPlayer.getStatus())
       {
@@ -162,7 +164,7 @@ public class GameController
          // Player is not active
          _server.broadcastTextMessage(currentPlayer.getCharacterName() + " must pass because they incorrectly accused");
       }
-      
+
    }
 
 
@@ -192,8 +194,9 @@ public class GameController
 
       if (currentPlayer.getLocation().getIsHall())
       {
-         _server.broadcastTextMessage(currentPlayer.getUserName() + " cannot make a suggestion because they are in a " +
-                 "hall.");
+         _server.broadcastTextMessage(
+                 currentPlayer.getCharacterName() + " cannot make a suggestion because they are in a " +
+                         "hallway.");
          return;
       }
 
@@ -206,7 +209,7 @@ public class GameController
          move(suggestedPlayer, currentPlayer.getLocation().getRoomName());
       }
 
-      _server.broadcastTextMessage(currentPlayer + "has suggested that " + suggestion.toString());
+      _server.broadcastTextMessage(currentPlayer + " has suggested that " + suggestion.toString());
 
       handleSuggest(suggestion);
    }
@@ -360,6 +363,23 @@ public class GameController
       }
 
       return null;
+   }
+
+
+   private boolean gameIsOver()
+   {
+
+      for (Player player : _players)
+      {
+         // if there is any player still active
+         if (player.getStatus())
+         {
+            return false;
+         }
+      }
+
+      return true;
+
    }
 
 

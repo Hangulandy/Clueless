@@ -133,6 +133,7 @@ public class CluelessClient
    private void printMainMenu()
    {
 
+      System.out.println();
       System.out.println("Menu Options: ");
       System.out.println("1. Send a message to everybody");
       System.out.println("2. Start game");
@@ -320,7 +321,7 @@ public class CluelessClient
 
       String fullData = concatenateTokens(tokens, 1, tokens.length - 1);
 
-      System.out.println(fullData);
+      // System.out.println(fullData);
 
       String[] output = fullData.split(" ");
 
@@ -373,7 +374,7 @@ public class CluelessClient
             renderGameBoard();
          } else if (choice == tokens.length + 1)
          {
-            displayCards();
+            hand.displayCards();
          }
       } while (choice < 1 || choice >= tokens.length);
 
@@ -420,22 +421,13 @@ public class CluelessClient
    private void renderGameBoard()
    {
 
+      // System.out.println(concatenateTokens(gameBoardData, 0, gameBoardData.length - 1));
       gameBoard.displayGameBoard(gameBoardData);
 
    }
 
 
-   private void displayCards()
-   {
 
-      System.out.println("You have the following cards:");
-      for (Card card : hand.getCards())
-      {
-         System.out.println(card.toString());
-      }
-
-      System.out.println();
-   }
 
 
    private void handleAskAccuse(String[] tokens)
@@ -443,13 +435,11 @@ public class CluelessClient
 
       String prompt = concatenateTokens(tokens, 1, tokens.length - 1);
 
-      System.out.println(prompt);
+      System.out.println("\n" + prompt);
 
       String[] menuItems = {"answer", "Yes", "No"};
 
-      int choice = generateMenu(menuItems);
-
-      sendReply("answer", menuItems[choice]);
+      handleMultipleChoicePrompt(menuItems);
 
    }
 
@@ -580,11 +570,6 @@ public class CluelessClient
 
    }
 
-   // TODO Add GameBoard gameBoard in class instance variables
-   // TODO Add handleUpdateGameBoard in read loop
-   // TODO Add renderGameBoard method
-   // TODO Add ArrayList<Player> players in class instance variables?
-   // TODO Add renderGameBoard and renderHand as options for the reusable menu
-
+   // TODO Add ArrayList<Player> players in class instance variables? Maybe later for text messaging
 
 }
