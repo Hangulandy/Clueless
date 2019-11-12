@@ -141,7 +141,7 @@ public class GameBoard
             // System.out.println(divider);
             // System.out.println(roomRow + "\n");
             // System.out.println(playerRow + "\n\n\n");
-            
+
             renderedBoard += divider + "\n" + roomRow + "\n" + playerRow + "\n\n\n";
             roomRow = "";
             playerRow = "";
@@ -150,27 +150,20 @@ public class GameBoard
       return renderedBoard;
    }
 
-   public String getGameBoardData(ArrayList<Player> players)
-   {
-      //String gameBoardData = "scarlet ..." 
-   }
 
    public void displayGameBoard(String[] tokens)
    {
-      // tokens example
-      // String[] tokens = "scarlet hallway_2 mustard hallway_5 white hallway_12 green hallway_11 peacock hallway_8 plum hallway_3".split(" ");
-      
-      HashMap<String><String> playerLocations = new HashMap<String><String>();
 
-      for(int m = 0; m < tokens.size() - 1; m++)
+      HashMap<String, String> playerLocations = new HashMap<String, String>();
+
+      for (int m = 0; m < tokens.length - 1; m++)
       {
          String player = tokens[m];
-         String location = tokens[m+1];
+         String location = tokens[m + 1];
 
          playerLocations.put(player, location);
       }
 
-      String renderedBoard = "";
       String roomRow = "";
       String playerRow = "";
       int maxWidth = 25;
@@ -220,49 +213,6 @@ public class GameBoard
             System.out.println(playerRow + "\n\n\n");
          }
       }
-      return renderedBoard;
-   }
-
-
-   /*
-   Commented out because implemented in the Room class
-    */
-
-/*   public static ArrayList<Room> getPossibleMoves(Player player, ArrayList<Player> players, GameBoard gb)
-   {
-
-      ArrayList<Room> adjacentRooms = player.getLocation().getAdjacentRooms();
-
-      for (int i = 0; i < adjacentRooms.size(); i++)
-      {
-         Room r = adjacentRooms.get(i);
-
-         //can't move to a hallway if another person is in it
-         if (r.getRoomName().startsWith("hallway"))
-         {
-
-            for (int j = 0; j < players.size(); j++)
-            {
-               Player p = players.get(j);
-
-               if (p.getLocation() == r)
-               {
-                  adjacentRooms.remove(r);
-                  i = i - 1;
-               }
-            }
-         }
-      }
-
-      return adjacentRooms;
-   }*/
-
-
-   public void displayBoard(String[] tokens)
-   {
-      // string format "updateGameBoard Ms._Scarlett Conservatory Col._Mustard Kitchen"
-      // TODO display the game board using this String
-
    }
 
 
@@ -279,8 +229,9 @@ public class GameBoard
          msg.append(player.getLocation().getRoomName());
       }
 
-      return null;
+      return msg.toString();
    }
+
 
    public void move(Player player, Room room, ArrayList<Player> players, GameBoard gb)
    {
@@ -326,62 +277,5 @@ public class GameBoard
       return null;
    }
 
-   /*
-   Commented out because not needed for system
-    */
-
-/*   public static void main(String[] args)
-   {
-
-      GameBoard gb = new GameBoard();
-
-      //create players here for the meantime
-      ArrayList<Player> players = new ArrayList<>();
-      Player scarlet = new Player();
-      Player mustard = new Player();
-      Player white = new Player();
-      Player green = new Player();
-      Player peacock = new Player();
-      Player plum = new Player();
-
-      scarlet.setLocation(gb.hallway_2);
-      mustard.setLocation(gb.hallway_5);
-      white.setLocation(gb.hallway_12);
-      green.setLocation(gb.hallway_11);
-      peacock.setLocation(gb.hallway_8);
-      plum.setLocation(gb.hallway_3);
-
-      players.add(scarlet);
-      players.add(mustard);
-      players.add(white);
-      players.add(green);
-      players.add(peacock);
-      players.add(plum);
-
-      System.out.println("\nRender board:");
-      render(gb, players);
-
-      System.out.println("\nGet possible moves for Mrs. Peacock:");
-      ArrayList<Room> moves = getPossibleMoves(peacock, players, gb);
-
-      // Print out mrs.peacock's moves
-      for (Room r : moves)
-      {
-         System.out.println(r.getRoomName());
-      }
-
-      //move mrs peacock
-      System.out.println("\nMove Mrs. Peacock to Conservatory");
-      move(peacock, gb.conservatory, players, gb);
-
-      System.out.println("\nGet possible moves for Mrs. Peacock:");
-      moves = getPossibleMoves(peacock, players, gb);
-
-      // Print out mrs.peacock's moves after her player moves
-      for (Room r : moves)
-      {
-         System.out.println(r.getRoomName());
-      }
-   }*/
 
 }

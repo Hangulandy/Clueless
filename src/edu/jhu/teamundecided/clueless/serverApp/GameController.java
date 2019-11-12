@@ -21,7 +21,7 @@ public class GameController
 {
 
    private Server _server;
-   private ArrayList<Player> _players; // TODO make into circular linked list
+   private ArrayList<Player> _players;
    private boolean _gameStarted;
    private GameBoard _gb;
    DeckController _deckController;

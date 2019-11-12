@@ -315,7 +315,12 @@ public class CluelessClient
 
    private void handleUpdateGameBoard(String[] tokens)
    {
-      gameBoardData = tokens;
+
+      String fullData = concatenateTokens(tokens, 1, tokens.length - 1);
+
+      String[] output = fullData.split(" ");
+
+      gameBoardData = output;
    }
 
 
@@ -411,7 +416,7 @@ public class CluelessClient
    private void renderGameBoard()
    {
 
-      gameBoard.displayBoard(gameBoardData);
+      gameBoard.displayGameBoard(gameBoardData);
 
    }
 
