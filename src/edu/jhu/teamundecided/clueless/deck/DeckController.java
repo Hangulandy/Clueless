@@ -2,6 +2,7 @@ package edu.jhu.teamundecided.clueless.deck;
 
 import edu.jhu.teamundecided.clueless.player.Player;
 
+import java.io.IOException;
 import java.util.*;
 
 public class DeckController
@@ -78,7 +79,7 @@ public class DeckController
         _decks.forEach(Deck::shuffleCards);
     }
 
-    public boolean dealCards(ArrayList<Player> players)
+    public boolean dealCards(ArrayList<Player> players) throws IOException
     {
         // This method will deal all the cards to all the players
         if (players == null)
@@ -105,6 +106,11 @@ public class DeckController
             {
                 playerId = 0;
             }
+        }
+
+        for (Player player : players)
+        {
+            player.sendHandToClient();
         }
 
         // Deal successful

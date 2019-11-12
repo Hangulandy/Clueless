@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class Player
 {
+
    private final int _playerNum;
    private static int numPlayers = 0; // class variable, not instance variable
    private String _characterName = "";
@@ -21,8 +22,10 @@ public class Player
    private boolean _isActive;
    private Hand _playerHand;
 
+
    public Player()
    {
+
       _isActive = true;
       _playerNum = ++numPlayers; // set this player number to current player count
       _playerHand = new Hand();
@@ -53,6 +56,7 @@ public class Player
 
    public Player(ServerWorker serverWorker)
    {
+
       this();
       _userName = serverWorker.getUserName();
       _serverWorker = serverWorker;
@@ -83,6 +87,7 @@ public class Player
       return response[1];
 
    }
+
 
    /*
    Prompts the user to choose a room to move based on the parameter possibleMoves
@@ -132,6 +137,7 @@ public class Player
    public Suggestion getSuggestionCommand(Deck deck) throws IOException
    {
 
+      // TODO fix this send
       _serverWorker.send("It is time to make a suggestion...");
 
       sendSuggestPrompt(deck, Card.CardType.Suspect);
@@ -178,23 +184,24 @@ public class Player
       askIfWantAccuse();
       String response = getResponse()[1];
 
-      if (response.equalsIgnoreCase("yes"))
+      if (response.equalsIgnoreCase("no"))
       {
-         _serverWorker.sendTextMessage("It is time to make an accusation...");
-
-         sendSuggestPrompt(deck, Card.CardType.Suspect);
-         String suspect = getResponse()[1];
-
-         sendSuggestPrompt(deck, Card.CardType.Weapon);
-         String weapon = getResponse()[1];
-
-         sendSuggestPrompt(deck, Card.CardType.Room);
-         String room = getResponse()[1];
-
-         return new Suggestion(suspect, weapon, room);
-
+         return null;
       }
-      return null;
+
+      _serverWorker.sendTextMessage("It is time to make an accusation...");
+
+      sendSuggestPrompt(deck, Card.CardType.Suspect);
+      String suspect = getResponse()[1];
+
+      sendSuggestPrompt(deck, Card.CardType.Weapon);
+      String weapon = getResponse()[1];
+
+      sendSuggestPrompt(deck, Card.CardType.Room);
+      String room = getResponse()[1];
+
+      return new Suggestion(suspect, weapon, room);
+
    }
 
 
@@ -234,6 +241,7 @@ public class Player
       return response;
    }
 
+
    public void sendHandToClient() throws IOException
    {
 
@@ -266,8 +274,10 @@ public class Player
 
    }
 
+
    public void setLocation(Room room)
    {
+
       this._currentLocation = room;
    }
 
@@ -307,14 +317,14 @@ public class Player
    }
 
 
-   public ServerWorker get_serverWorker()
+   public ServerWorker getServerWorker()
    {
 
       return _serverWorker;
    }
 
 
-   public String getUserID()
+   public String getUserName()
    {
 
       return _userName;

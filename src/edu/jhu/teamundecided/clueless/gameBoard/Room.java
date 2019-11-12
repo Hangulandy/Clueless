@@ -31,7 +31,7 @@ public class Room
 
       for (Room room : _adjacentRooms)
       {
-         if (room.get_isHall())
+         if (room.getIsHall())
          {
             if (room.getOccupants().size() > 0)
             {
@@ -45,7 +45,7 @@ public class Room
    }
 
 
-   private boolean get_isHall()
+   public boolean getIsHall()
    {
 
       return _isHall;

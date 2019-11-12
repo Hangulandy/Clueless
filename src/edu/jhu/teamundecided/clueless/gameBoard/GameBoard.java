@@ -258,12 +258,37 @@ public class GameBoard
    }*/
 
 
+   public void displayBoard(String[] tokens)
+   {
+      // string format "updateGameBoard Ms._Scarlett Conservatory Col._Mustard Kitchen"
+      // TODO display the game board using this String
+
+   }
+
+
+   public String getGameBoardData(ArrayList<Player> players)
+   {
+
+      StringBuilder msg = new StringBuilder("updateGameBoard");
+
+      for (Player player : players)
+      {
+         msg.append(" ");
+         msg.append(player.getCharacterName());
+         msg.append(" ");
+         msg.append(player.getLocation().getRoomName());
+      }
+
+      return null;
+   }
+
    public void move(Player player, Room room, ArrayList<Player> players, GameBoard gb)
    {
 
       player.setLocation(room);
       render(players);
    }
+
 
    public boolean movePlayer(Player player, String roomName)
    {

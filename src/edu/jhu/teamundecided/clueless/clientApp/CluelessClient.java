@@ -1,6 +1,7 @@
 package edu.jhu.teamundecided.clueless.clientApp;
 
 import edu.jhu.teamundecided.clueless.deck.Card;
+import edu.jhu.teamundecided.clueless.gameBoard.GameBoard;
 import edu.jhu.teamundecided.clueless.player.Hand;
 
 import java.io.*;
@@ -20,6 +21,8 @@ public class CluelessClient
    private String _userName;
    private boolean keepAsking;
    private Hand hand;
+   private GameBoard gameBoard;
+   private String[] gameBoardData;
 
    private Scanner _scanner = new Scanner(System.in);
 
@@ -93,7 +96,6 @@ public class CluelessClient
             System.err.println("Login failed");
          }
 
-         // client.logoff();
       }
    }
 
@@ -288,6 +290,12 @@ public class CluelessClient
                } else if ("sendHand".equalsIgnoreCase(cmd))
                {
                   handleSendHand(tokens);
+               } else if ("updateGameBoard".equalsIgnoreCase(cmd))
+               {
+                  handleUpdateGameBoard(tokens);
+               } else if ("logoff".equalsIgnoreCase(cmd))
+               {
+                  logoff();
                }
             }
          }
@@ -302,6 +310,12 @@ public class CluelessClient
             e.printStackTrace();
          }
       }
+   }
+
+
+   private void handleUpdateGameBoard(String[] tokens)
+   {
+      gameBoardData = tokens;
    }
 
 
@@ -397,7 +411,7 @@ public class CluelessClient
    private void renderGameBoard()
    {
 
-      System.out.println("Method currently under construction...");
+      gameBoard.displayBoard(gameBoardData);
 
    }
 
