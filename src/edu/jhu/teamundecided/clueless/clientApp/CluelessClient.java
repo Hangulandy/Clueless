@@ -204,7 +204,7 @@ public class CluelessClient
          System.out.println("The message failed to send.");
       }
 
-      NoteBook.main(null);
+      NoteBook.main(_userName.split(" "));
    }
 
 
