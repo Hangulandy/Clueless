@@ -187,9 +187,7 @@ public class GameController
          // Player is not active
          _server.broadcastTextMessage(currentPlayer.getCharacterName() + " must pass because they incorrectly accused");
       }
-
-      // Render board each turn
-      _server.broadcastTextMessage(_gb.render(_players));
+      
    }
 
 
