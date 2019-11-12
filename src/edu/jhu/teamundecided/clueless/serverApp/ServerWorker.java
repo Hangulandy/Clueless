@@ -266,7 +266,7 @@ public class ServerWorker extends Thread
       {
          StringBuilder finalMessage = new StringBuilder(outMsg.trim());
          finalMessage.append("\n");
-         _outputStream.write(outMsg.getBytes());
+         _outputStream.write(finalMessage.toString().getBytes());
          System.out.println("Message sent to " + _userName + " : " + outMsg);
       }
    }

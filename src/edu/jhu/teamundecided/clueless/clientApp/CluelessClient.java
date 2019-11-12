@@ -37,6 +37,8 @@ public class CluelessClient
       this._serverPort = serverPort;
       this.keepAsking = true;
       hand = new Hand();
+      gameBoardData = null;
+      gameBoard = new GameBoard();
    }
 
 
@@ -318,7 +320,10 @@ public class CluelessClient
 
       String fullData = concatenateTokens(tokens, 1, tokens.length - 1);
 
+      System.out.println(fullData);
+
       String[] output = fullData.split(" ");
+
 
       gameBoardData = output;
    }
@@ -384,14 +389,13 @@ public class CluelessClient
 
       int i = 0;
 
-      while (i < tokens.length)
+      while (++i < tokens.length)
       {
-         i++;
          System.out.println(i + " " + tokens[i]);
       }
 
-      System.out.println(++i + " " + "Show the game board");
-      System.out.println(++i + " " + "View your cards");
+      System.out.println(i++ + " " + "Show the game board");
+      System.out.println(i + " " + "View your cards");
 
       System.out.println();
 

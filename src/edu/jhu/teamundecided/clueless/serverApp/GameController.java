@@ -111,22 +111,22 @@ public class GameController
          switch (player.getCharacterName())
          {
             case "Ms._Scarlett":
-               _gb.movePlayer(player, "hallway_2");
+               move(player, "hallway_2");
                break;
             case "Col._Mustard":
-               _gb.movePlayer(player, "hallway_5");
+               move(player, "hallway_5");
                break;
             case "Mrs._White":
-               _gb.movePlayer(player, "hallway_12");
+               move(player, "hallway_12");
                break;
             case "Mrs._Peacock":
-               _gb.movePlayer(player, "hallway_11");
+               move(player, "hallway_11");
                break;
             case "Prof._Plum":
-               _gb.movePlayer(player, "hallway_8");
+               move(player, "hallway_8");
                break;
             case "Mr._Green":
-               _gb.movePlayer(player, "hallway_3");
+               move(player, "hallway_3");
                break;
          }
          _server.broadcastTextMessage(
@@ -177,7 +177,6 @@ public class GameController
       if (desiredRoom != null)
       {
          move(currentPlayer, desiredRoom);
-         _server.broadcastCommand(_gb.getGameBoardData(_players));
          return true;
       } else
       {
@@ -256,6 +255,11 @@ public class GameController
       if (success)
       {
          _server.broadcastTextMessage(player.getCharacterName() + " moves to the " + room);
+         String msg = _gb.getGameBoardData(_players);
+
+         System.out.println(msg);
+
+         _server.broadcastCommand(msg);
 
       } else
       {

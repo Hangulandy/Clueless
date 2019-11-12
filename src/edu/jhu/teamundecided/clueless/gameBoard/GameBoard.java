@@ -226,7 +226,13 @@ public class GameBoard
          msg.append(" ");
          msg.append(player.getCharacterName());
          msg.append(" ");
-         msg.append(player.getLocation().getRoomName());
+         if (player.getLocation() == null)
+         {
+            msg.append("blank");
+         } else
+         {
+            msg.append(player.getLocation().getRoomName());
+         }
       }
 
       return msg.toString();
