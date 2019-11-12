@@ -87,9 +87,10 @@ public class GameBoard
    }
 
 
-   public void render(ArrayList<Player> players)
+   public String render(ArrayList<Player> players)
    {
 
+      String renderedBoard = "";
       String roomRow = "";
       String playerRow = "";
       int maxWidth = 25;
@@ -136,13 +137,17 @@ public class GameBoard
 
          if ((i + 1) % 5 == 0 && i != 0)
          {
-            System.out.println(divider);
-            System.out.println(roomRow + "\n");
-            System.out.println(playerRow + "\n\n\n");
+            // Commented out because of string return instead of print.
+            // System.out.println(divider);
+            // System.out.println(roomRow + "\n");
+            // System.out.println(playerRow + "\n\n\n");
+            
+            renderedBoard += divider + "\n" + roomRow + "\n" + playerRow + "\n\n\n";
             roomRow = "";
             playerRow = "";
          }
       }
+      return renderedBoard;
    }
 
    /*
@@ -280,5 +285,31 @@ public class GameBoard
       }
    }*/
 
+   public static void main(String[] args){
+      GameBoard gb = new GameBoard();
 
+      ArrayList<Player> players = new ArrayList<>();
+      Player scarlet = new Player();
+      Player mustard = new Player();
+      Player white = new Player();
+      Player green = new Player();
+      Player peacock = new Player();
+      Player plum = new Player();
+
+      scarlet.setLocation(gb.hallway_2);
+      mustard.setLocation(gb.hallway_5);
+      white.setLocation(gb.hallway_12);
+      green.setLocation(gb.hallway_11);
+      peacock.setLocation(gb.hallway_8);
+      plum.setLocation(gb.hallway_3);
+
+      players.add(scarlet);
+      players.add(mustard);
+      players.add(white);
+      players.add(green);
+      players.add(peacock);
+      players.add(plum);
+
+      System.out.println(gb.render(players));
+   }
 }
