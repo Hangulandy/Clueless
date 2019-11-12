@@ -150,6 +150,80 @@ public class GameBoard
       return renderedBoard;
    }
 
+   public String getGameBoardData(ArrayList<Player> players)
+   {
+      //String gameBoardData = "scarlet ..." 
+   }
+
+   public void displayGameBoard(String[] tokens)
+   {
+      // tokens example
+      // String[] tokens = "scarlet hallway_2 mustard hallway_5 white hallway_12 green hallway_11 peacock hallway_8 plum hallway_3".split(" ");
+      
+      HashMap<String><String> playerLocations = new HashMap<String><String>();
+
+      for(int m = 0; m < tokens.size() - 1; m++)
+      {
+         String player = tokens[m];
+         String location = tokens[m+1];
+
+         playerLocations.put(player, location);
+      }
+
+      String renderedBoard = "";
+      String roomRow = "";
+      String playerRow = "";
+      int maxWidth = 25;
+
+      String divider = "";
+      while (divider.length() < maxWidth * 5)
+      {
+         divider += "_";
+      }
+
+      for (int i = 0; i < rooms.size(); i++)
+      {
+         Room room = rooms.get(i);
+         String roomName = room.getRoomName();
+         int length = roomName.length();
+         String playersInRoom = "";
+
+         for (String player : playerLocations.keySet())
+         {
+            if (playerLocations.get(player) == roomName)
+            {
+               if (playersInRoom == "")
+                  playersInRoom = player;
+               else if (playersInRoom != "")
+                  playersInRoom = playersInRoom + ", " + player;
+            }
+         }
+
+         while (playersInRoom.length() < maxWidth)
+         {
+            playersInRoom += " ";
+         }
+
+         playerRow = playerRow + playersInRoom;
+
+         while (roomName.length() < maxWidth)
+         {
+            roomName += " ";
+         }
+
+         roomRow = roomRow + roomName;
+
+         if ((i + 1) % 5 == 0 && i != 0)
+         {
+            System.out.println(divider);
+            System.out.println(roomRow + "\n");
+            System.out.println(playerRow + "\n\n\n");
+         }
+      }
+      return renderedBoard;
+   }
+
+
    /*
    Commented out because implemented in the Room class
     */
@@ -285,31 +359,4 @@ public class GameBoard
       }
    }*/
 
-   public static void main(String[] args){
-      GameBoard gb = new GameBoard();
-
-      ArrayList<Player> players = new ArrayList<>();
-      Player scarlet = new Player();
-      Player mustard = new Player();
-      Player white = new Player();
-      Player green = new Player();
-      Player peacock = new Player();
-      Player plum = new Player();
-
-      scarlet.setLocation(gb.hallway_2);
-      mustard.setLocation(gb.hallway_5);
-      white.setLocation(gb.hallway_12);
-      green.setLocation(gb.hallway_11);
-      peacock.setLocation(gb.hallway_8);
-      plum.setLocation(gb.hallway_3);
-
-      players.add(scarlet);
-      players.add(mustard);
-      players.add(white);
-      players.add(green);
-      players.add(peacock);
-      players.add(plum);
-
-      System.out.println(gb.render(players));
-   }
 }
