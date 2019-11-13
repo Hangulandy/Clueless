@@ -6,6 +6,7 @@ import edu.jhu.teamundecided.clueless.player.Hand;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -24,7 +25,8 @@ public class CluelessClient
    private GameBoard gameBoard;
    private String[] gameBoardData;
 
-   private Scanner _scanner = new Scanner(System.in);
+//   private Scanner _scanner = new Scanner(System.in);
+   private BufferedReader _scanner = new BufferedReader(new InputStreamReader(System.in));
 
    private ArrayList<UserStatusListener> _userStatusListeners = new ArrayList<>();
    private ArrayList<MessageListener> _messageListeners = new ArrayList<>();
@@ -153,29 +155,38 @@ public class CluelessClient
       {
          System.out.println("Please Enter Your Choice: ");
 
-         if (this._scanner.hasNextInt())
+//         if (this._scanner.hasNextInt())
+//         {
+//            userInput = this._scanner.nextInt();
+         try
          {
-            userInput = this._scanner.nextInt();
+            userInput = Integer.parseInt(this._scanner.readLine());
 
             if (userInput >= min && userInput <= max)
             {
                valid = true;
-            } else
+            }
+            else
             {
                // choice is <= lower or >= upper
                System.out.println("\nYou entered " + userInput + ". ");
                System.out.println(errMSG);
             }
-         } else
-         {
-            // not an integer
-            System.out.println(errMSG);
-            this._scanner.next();
          }
+         catch (IOException ex)
+         {
+
+         }
+//         } else
+//         {
+//            // not an integer
+//            System.out.println(errMSG);
+//            this._scanner.next();
+//         }
 
       } while (!(valid));
 
-      this._scanner.nextLine(); // advance the scanner after integer input
+//      this._scanner.nextLine(); // advance the scanner after integer input
       return userInput;
    }
 
@@ -198,7 +209,14 @@ public class CluelessClient
    private void receiveUserName()
    {
       System.out.println("Please enter a user name: ");
-      _userName = _scanner.nextLine().trim();
+      try
+      {
+         _userName = _scanner.readLine().trim();
+      }
+      catch (IOException ex)
+      {
+
+      }
    }
 
 
@@ -557,11 +575,13 @@ public class CluelessClient
    {
 
       System.out.println("Please enter the message to broadcast :");
-      String msg = _scanner.nextLine();
-
-      String cmd = "broadcast " + msg + "\n";
+//      String msg = _scanner.nextLine();
       try
       {
+         String msg = _scanner.readLine();
+
+         String cmd = "broadcast " + msg + "\n";
+
          _serverOut.write(cmd.getBytes());
       } catch (IOException e)
       {
