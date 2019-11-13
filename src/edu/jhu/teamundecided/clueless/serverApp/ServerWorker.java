@@ -21,6 +21,16 @@ public class ServerWorker extends Thread
    private OutputStream _outputStream;
    private BufferedReader _reader;
 
+
+   public boolean isReadyToStart()
+   {
+
+      return _isReadyToStart;
+   }
+
+
+   private boolean _isReadyToStart;
+
    /*
    The default constructor should be called by the Server. It will set this server to the calling server. It will set
    the client socket to the socket initiated by the server when the socket was accepted.
@@ -30,6 +40,7 @@ public class ServerWorker extends Thread
 
       _server = server;
       _clientSocket = clientSocket;
+      _isReadyToStart = false;
    }
 
 
@@ -112,6 +123,7 @@ public class ServerWorker extends Thread
    private void handleStartGame() throws InterruptedException, IOException
    {
 
+      _isReadyToStart = true;
       _server.requestGameStart();
    }
 

@@ -125,7 +125,27 @@ public class Server extends Thread
 
    public void requestGameStart() throws InterruptedException, IOException
    {
-      _gc.startGame();
+
+      if (checkReadyStatus())
+      {
+         _gc.startGame();
+      } else
+      {
+         System.out.println("A request to start the game was made, but not all players are ready...");
+      }
+   }
+
+   private boolean checkReadyStatus()
+   {
+
+      for (ServerWorker worker : _workerList)
+      {
+         if (!worker.isReadyToStart())
+         {
+            return false;
+         }
+      }
+      return true;
    }
 
 
