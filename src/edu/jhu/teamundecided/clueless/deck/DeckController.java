@@ -136,9 +136,9 @@ public class DeckController
     {
         Deck suggestionDeck = new Deck();
 
-        suggestionDeck.addCardsFromDeck(_suspectDeck);
-        suggestionDeck.addCardsFromDeck(_roomDeck);
-        suggestionDeck.addCardsFromDeck(_weaponDeck);
+        suggestionDeck.addCardsFromDeck(new Deck(_Suspects, Card.CardType.Suspect));
+        suggestionDeck.addCardsFromDeck(new Deck(_Rooms, Card.CardType.Room));
+        suggestionDeck.addCardsFromDeck(new Deck(_Weapons, Card.CardType.Weapon));
 
         return suggestionDeck;
     }
